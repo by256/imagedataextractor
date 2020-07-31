@@ -80,11 +80,10 @@ class TextDetector:
         rects = np.array(rects)
         confidences = np.array(confidences)
         # sort confidences in descending order
-        # sort_idx = np.argsort(confidences)[::-1]
-        # rects = rects[sort_idx]
-        # confidences = confidences[sort_idx]
+        sort_idx = np.argsort(confidences)[::-1]
+        rects = rects[sort_idx]
+        confidences = confidences[sort_idx]
 
-        # boxes = rects
         boxes = non_max_suppression(rects, probs=confidences, overlapThresh=0.3)
         return boxes
 
