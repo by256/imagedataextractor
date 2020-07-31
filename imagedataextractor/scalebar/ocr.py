@@ -78,9 +78,14 @@ class TextDetector:
                 confidences.append(scores_data[x])
         
         rects = np.array(rects)
-        print('rects', rects.shape)
-        boxes = non_max_suppression(rects, probs=confidences)
-        print('confidences', confidences, len(confidences))
+        confidences = np.array(confidences)
+        # sort confidences in descending order
+        # sort_idx = np.argsort(confidences)[::-1]
+        # rects = rects[sort_idx]
+        # confidences = confidences[sort_idx]
+
+        # boxes = rects
+        boxes = non_max_suppression(rects, probs=confidences, overlapThresh=0.3)
         return boxes
 
 
