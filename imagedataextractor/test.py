@@ -17,5 +17,7 @@ print('image', type(image))
 
 rois = detector.get_text_rois(image)
 for roi in rois:
+    text = perform_ocr(roi)
     plt.imshow(roi)
+    plt.title(text)
     plt.show()
