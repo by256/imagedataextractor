@@ -14,7 +14,8 @@ class TextDetector:
 
     def __init__(self):
         # self.model_path = '../models/frozen_east_text_detection.pb'
-        self.model_path = '/Users/batuhan/Documents/Projects/imagedataextractor/imagedataextractor/models/frozen_east_text_detection.pb'
+        self.model_path = '/home/by256/Documents/Projects/imagedataextractor/imagedataextractor/models/frozen_east_text_detection.pb'
+        # self.model_path = '/Users/batuhan/Documents/Projects/imagedataextractor/imagedataextractor/models/frozen_east_text_detection.pb'
         self.layer_names = ["feature_fusion/Conv_7/Sigmoid", "feature_fusion/concat_3"]
         self.model = cv2.dnn.readNet(self.model_path)
         self.blob_params = {'scalefactor': 1.0, 
@@ -23,7 +24,7 @@ class TextDetector:
                             'swapRB': True}  # should maybe be false
         self.confidence_threshold = 0.5
 
-    def postprocess_detections(self, scores, geometry):
+    def postprocess_detections(self, scores: np.ndarray, geometry: np.ndarray) -> np.ndarray:
         rows, cols = scores.shape[2:]
         rects = []
         confidences = []
@@ -68,7 +69,7 @@ class TextDetector:
         return boxes
 
 
-    def detect_text(self, image):
+    def detect_text(self, image: np.ndarray) -> np.ndarray:
         blob_params = self.blob_params
         blob_params['size'] = (image.shape[1], image.shape[0])
         blob = cv2.dnn.blobFromImage(image, **blob_params)
@@ -76,3 +77,13 @@ class TextDetector:
         scores, geometry = self.model.forward(self.layer_names)
         boxes = self.postprocess_detections(scores, geometry)
         return boxes
+
+    def get_text_rois(self, image: np.ndarray) -> list:
+        rois = []
+        boxes = self.detect_text(image)
+        for x1, y1, x2, y2 in boxes:
+            box_w = x2 - x1
+            box_h = y2 - y1
+            roi_image = image[y1-box_h:y2+box_h, x1-box_w:x2+box_w]
+            rois.append(roi_image)
+        return rois
