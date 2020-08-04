@@ -78,12 +78,22 @@ class TextDetector:
         boxes = self.postprocess_detections(scores, geometry)
         return boxes
 
-    def get_text_rois(self, image: np.ndarray) -> list:
+    def get_text_rois(self, image: np.ndarray, scale: float=1.5) -> list:
         rois = []
         boxes = self.detect_text(image)
         for x1, y1, x2, y2 in boxes:
-            box_w = x2 - x1
-            box_h = y2 - y1
-            roi_image = image[y1-box_h:y2+box_h, x1-box_w:x2+box_w]
+            box_w = int(scale * (x2 - x1))
+            box_h = int(scale * (y2 - y1))
+            start_x, end_x = x1 - box_w, x2 + box_w
+            start_y, end_y = y1 - box_h, y2 + box_h
+            if start_x < 0:
+                start_x = 0
+            if start_y < 0:
+                start_y = 0
+
+            roi_image = image[start_y:end_y, start_x:end_x]
             rois.append(roi_image)
+        
+        inverted_rois = [255-x for x in rois]
+        rois = rois + inverted_rois  # concat inverted rois
         return rois
