@@ -1,6 +1,14 @@
 # ImageDataExtractor 2.0
 
-### OCR
+## OCR
+
+### TODO
+
+- add greek language dictionary/model. Consider how this should be done automatically when someone pip installs/installs from source.
+- extract scalebar images using the text detector.
+- finetune ocr model.
+
+### Useful resources
 
 - [Tesseract documentation](https://github.com/tesseract-ocr/tessdoc)
 
