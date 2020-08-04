@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import pytesseract
+from PIL import Image, ImageFilter
 from .utils import non_max_suppression
 
 
@@ -78,7 +79,7 @@ class TextDetector:
         boxes = self.postprocess_detections(scores, geometry)
         return boxes
 
-    def get_text_rois(self, image: np.ndarray, scale: float=1.5) -> list:
+    def get_text_rois(self, image: np.ndarray, scale: float=2) -> list:
         rois = []
         boxes = self.detect_text(image)
         for x1, y1, x2, y2 in boxes:
@@ -95,5 +96,12 @@ class TextDetector:
             rois.append(roi_image)
         
         inverted_rois = [255-x for x in rois]
-        rois = rois + inverted_rois  # concat inverted rois
+        rois = rois + inverted_rois
+
+        blur = lambda x: np.array(Image.fromarray(x).filter(ImageFilter.GaussianBlur(radius=2)))
+        thresh = lambda x: cv2.adaptiveThreshold(cv2.cvtColor(x, cv2.COLOR_BGR2GRAY), 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 3, 2)
+        
+        thresh_rois = [thresh(blur(x)) for x in rois]
+
+        rois = rois + thresh_rois  # concat augmented rois
         return rois
