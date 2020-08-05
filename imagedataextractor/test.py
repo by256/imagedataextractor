@@ -17,11 +17,11 @@ from scalebar.textdetection import TextDetector
 # image = Image.open('../examples/500 nm.png')  # y (somehow)
 # image = Image.open('../examples/50 nm(2).png')  # y (easy)
 # image = Image.open('../examples/2 um.png')  # y
-# image = Image.open('../examples/1 um.png')  # n
+image = Image.open('../examples/1 um.png')  # n
 # image = Image.open('../examples/5 um.png')  # n
 # image = Image.open('../examples/100 um.png')  # n
 # image = Image.open('../examples/200 um.png')  # n
-image = Image.open('../examples/1 um(2).png')  #
+# image = Image.open('../examples/1 um(2).png')  # n
 
 print('original image', np.array(image).shape)
 h, w = np.array(image).shape[:2]

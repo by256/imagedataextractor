@@ -19,9 +19,9 @@ class OCR:
         self.valid_text_expression = r'[1-9]\d*\s+(μ|u|n)m'
 
     def perform_ocr(self, image: np.ndarray, custom_config: str=None) -> str:
-        custom_config = '--psm 6 --oem 1'
+        custom_config = '--psm 6 --oem 1 -c tessedit_char_whitelist=0123456789\sunm'
         image = self.preprocess_image(image)
-        text = pytesseract.image_to_string(image, config=custom_config)
+        text = pytesseract.image_to_string(image, lang='eng', config=custom_config)
         print('ocr text', text)
         match = re.search(self.valid_text_expression, text)
         if match:
@@ -44,20 +44,10 @@ class OCR:
             plt.show()
             if valid_match:
                 break
+        return text
 
     def preprocess_image(self, image):
         h, w = image.shape[:2]
-        # import matplotlib.pyplot as plt
-        # plt.imshow(image)
-        # plt.show()
-        image = Image.fromarray(image)
-        # resize
-        image = image.resize((int(w*2.5), int(h*2.5)), resample=Image.BICUBIC)
-        # blur
-        # image = image.filter(ImageFilter.GaussianBlur(radius=2))
+        image = Image.fromarray(image).resize((int(w*2.5), int(h*2.5)), resample=Image.BICUBIC)
         image = np.array(image)
-        # image = cv2.adaptiveThreshold(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY), 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 3, 2)
-        # print(image.shape)
-        # plt.imshow(image)
-        # plt.show()
         return image
