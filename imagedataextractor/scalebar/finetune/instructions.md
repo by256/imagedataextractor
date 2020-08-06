@@ -1,4 +1,4 @@
-### Instructions for finetuning Tesseract on scalebat data
+### Instructions for finetuning Tesseract on scalebar data
 
 1. git clone https://github.com/tesseract-ocr/tesstrain into the directory /imagedataextractor/imagedataextractor/scalebar/finetune/
 
