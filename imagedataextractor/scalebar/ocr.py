@@ -18,17 +18,16 @@ class OCR:
         self.text_detector = TextDetector()
         self.valid_text_expression = r'[1-9]\d*\s+(μ|u|n)m'
 
-    def perform_ocr(self, image: np.ndarray, custom_config: str=None) -> str:
-        custom_config = '--psm 6 --oem 1 -c tessedit_char_whitelist=0123456789\sunm'
+    def perform_ocr(self, image: np.ndarray, lang: str='eng', custom_config: str=None) -> str:
+        # custom_config = '--psm 6 --oem 1 -c tessedit_char_whitelist=0123456789\sunm'
+        custom_config = '--psm 6 -c tessedit_char_whitelist=0123456789\sunm'
         image = self.preprocess_image(image)
-        text = pytesseract.image_to_string(image, lang='eng', config=custom_config)
-        print('ocr text', text)
+        text = pytesseract.image_to_string(image, lang=lang, config=custom_config)
         match = re.search(self.valid_text_expression, text)
         if match:
             text = match[0]
         else:
             text = None
-        print('ocr filtered text', text, '\n')
         return text
 
     def get_scalebar_text(self, image: np.ndarray):

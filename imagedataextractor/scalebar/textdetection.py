@@ -69,8 +69,15 @@ class TextDetector:
         boxes = non_max_suppression(rects, probs=confidences, overlapThresh=0.3)
         return boxes
 
+    def preprocess_image(self, image: np.ndarray) -> np.ndarray:
+        h, w = image.shape[:2]
+        new_h = int(h - (h % 32))
+        new_w = int(w - (w % 32))
+        image = Image.fromarray(image).resize((new_w, new_h), resample=Image.BICUBIC)
+        return np.array(image)
 
     def detect_text(self, image: np.ndarray) -> np.ndarray:
+        image = self.preprocess_image(image)
         blob_params = self.blob_params
         blob_params['size'] = (image.shape[1], image.shape[0])
         blob = cv2.dnn.blobFromImage(image, **blob_params)
@@ -79,7 +86,7 @@ class TextDetector:
         boxes = self.postprocess_detections(scores, geometry)
         return boxes
 
-    def get_text_rois(self, image: np.ndarray, scale: float=2) -> list:
+    def get_text_rois(self, image: np.ndarray, scale: float=2, augment: bool=True) -> list:
         rois = []
         boxes = self.detect_text(image)
         for x1, y1, x2, y2 in boxes:
@@ -95,13 +102,14 @@ class TextDetector:
             roi_image = image[start_y:end_y, start_x:end_x]
             rois.append(roi_image)
         
-        inverted_rois = [255-x for x in rois]
-        rois = rois + inverted_rois
+        if augment:
+            inverted_rois = [255-x for x in rois]
+            rois = rois + inverted_rois
 
-        blur = lambda x: np.array(Image.fromarray(x).filter(ImageFilter.GaussianBlur(radius=2)))
-        thresh = lambda x: cv2.adaptiveThreshold(cv2.cvtColor(x, cv2.COLOR_BGR2GRAY), 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 3, 2)
-        
-        thresh_rois = [thresh(blur(x)) for x in rois]
+            blur = lambda x: np.array(Image.fromarray(x).filter(ImageFilter.GaussianBlur(radius=2)))
+            thresh = lambda x: cv2.adaptiveThreshold(cv2.cvtColor(x, cv2.COLOR_BGR2GRAY), 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 3, 2)
+            
+            thresh_rois = [thresh(blur(x)) for x in rois]
 
-        rois = rois + thresh_rois  # concat augmented rois
+            rois = rois + thresh_rois  # concat augmented rois
         return rois
