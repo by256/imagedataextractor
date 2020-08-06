@@ -129,5 +129,4 @@ dmypy.json
 .pyre/
 **/.DS_Store
 
-./imagedataextractor/scalebar/finetune/tesstrain
-./imagedataextractor/scalebar/finetune/tesstrain/
+./imagedataextractor/scalebar/finetune/tesstrain/*
