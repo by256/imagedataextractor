@@ -5,6 +5,7 @@
 ### TODO
 
 - Add segmentation module.
+- fix paths for loading pytorch model in segmentation.
 
 ## Analysis
 
@@ -21,6 +22,7 @@
 - ~~add greek language dictionary/model. Consider how this should be done automatically when someone pip installs/installs from source.~~ No need. Fine tuning english language model should suffice, labelling μ's as u's.
 - ~~extract scalebar images using the text detector.~~
 - ~~finetune ocr model.~~
+- fix paths in text detection.
 
 ### Useful resources
 
