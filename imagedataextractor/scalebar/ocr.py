@@ -15,7 +15,6 @@ This file will contain all code required to perform OCR.
 class OCR:
 
     def __init__(self):
-        self.text_detector = TextDetector()
         self.valid_text_expression = r'[1-9]\d*\s*(μ|u|n)m'
 
     def perform_ocr(self, image: np.ndarray, lang: str='eng', custom_config: str=None) -> str:
@@ -29,23 +28,25 @@ class OCR:
             text = None
         return text
 
-    def get_scalebar_text(self, image: np.ndarray):
+    def get_text_from_rois(self, rois: list):
         valid_match = False
-        rois = self.text_detector.get_text_rois(image)
-        for roi in rois:
+        text = None
+        valid_idx = 0
+        for i, roi in enumerate(rois):
             text = self.perform_ocr(roi)
             if text is not None:
                 valid_match = True
+                valid_idx = i
             if valid_match:
                 break
-        return text
+        return text, valid_idx
 
     def preprocess_image(self, image):
         h, w = image.shape[:2]
         image = Image.fromarray(image)
         # increase resolution
         image = image.resize((int(w*2.5), int(h*2.5)), resample=Image.BICUBIC)
-        # resize image to for text detection (must be multiple of 32)
+        # resize image for text detection (must be multiple of 32)
         h, w = np.array(image).shape[:2]
         new_h = int(h - (h % 32))
         new_w = int(w - (w % 32))

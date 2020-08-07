@@ -1,0 +1,1 @@
+from .scalebar import ScalebarDetector
