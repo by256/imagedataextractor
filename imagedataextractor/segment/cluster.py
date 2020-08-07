@@ -60,9 +60,9 @@ class Cluster:
 
         if mask.sum() > 128:
 
-            spatial_emb_masked = spatial_emb[mask.expand_as(spatial_emb)].view(2, -1)
-            sigma_masked = sigma[mask.expand_as(sigma)].view(self.n_sigma, -1)
-            seed_map_masked = seed_map[mask].view(1, -1)
+            spatial_emb_masked = spatial_emb[mask.bool().expand_as(spatial_emb)].view(2, -1)
+            sigma_masked = sigma[mask.bool().expand_as(sigma)].view(self.n_sigma, -1)
+            seed_map_masked = seed_map[mask.bool()].view(1, -1)
 
             unclustered = torch.ones(mask.sum()).byte().to(self.device)
             instance_map_masked = torch.zeros(mask.sum()).byte().to(self.device)
@@ -85,13 +85,13 @@ class Cluster:
                     if unclustered[proposal].sum().float()/proposal.sum().float() > 0.5:
                         instance_map_masked[proposal.squeeze()] = count
                         instance_mask = torch.zeros(height, width).byte()
-                        instance_mask[mask.squeeze().cpu()] = proposal.cpu().byte()
+                        instance_mask[mask.bool().squeeze().cpu()] = proposal.cpu().byte()
                         instances.append(
                             {'mask': instance_mask.squeeze()*255, 'score': seed_score})
                         count += 1
 
                 unclustered[proposal] = 0
 
-            instance_map[mask.squeeze().cpu()] = instance_map_masked.cpu()
+            instance_map[mask.bool().squeeze().cpu()] = instance_map_masked.cpu()
 
         return instance_map, instances

@@ -102,7 +102,7 @@ class UpsamplerBlock (nn.Module):
         self.bn = nn.BatchNorm2d(noutput, eps=1e-3)
 
     def forward(self, input):
-        output = F.interpolate(input, scale_factor=2, mode='bilinear')
+        output = F.interpolate(input, scale_factor=2, mode='bilinear', align_corners=False)
         output = self.conv(output)
         output = self.bn(output)
         return F.relu(output)
@@ -130,7 +130,7 @@ class Decoder (nn.Module):
         for layer in self.layers:
             output = layer(output)
 
-        output = F.interpolate(output, scale_factor=2, mode='bilinear')
+        output = F.interpolate(output, scale_factor=2, mode='bilinear', align_corners=False)
         output = self.output_conv(output)
 
         return output
@@ -160,7 +160,7 @@ class BranchedERFNet(nn.Module):
     def __init__(self, num_classes, encoder=None):
         super().__init__()
 
-        print('Creating branched erfnet with {} classes'.format(num_classes))
+        # print('Creating branched erfnet with {} classes'.format(num_classes))
 
         if (encoder is None):
             self.encoder = Encoder(sum(num_classes))
