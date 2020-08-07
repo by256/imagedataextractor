@@ -36,10 +36,6 @@ class OCR:
             text = self.perform_ocr(roi)
             if text is not None:
                 valid_match = True
-            import matplotlib.pyplot as plt
-            plt.imshow(roi)
-            plt.title(text)
-            plt.show()
             if valid_match:
                 break
         return text
