@@ -42,6 +42,13 @@ class OCR:
 
     def preprocess_image(self, image):
         h, w = image.shape[:2]
-        image = Image.fromarray(image).resize((int(w*2.5), int(h*2.5)), resample=Image.BICUBIC)
+        image = Image.fromarray(image)
+        # increase resolution
+        image = image.resize((int(w*2.5), int(h*2.5)), resample=Image.BICUBIC)
+        # resize image to for text detection (must be multiple of 32)
+        h, w = np.array(image).shape
+        new_h = int(h - (h % 32))
+        new_w = int(w - (w % 32))
+        image = image.resize((new_w, new_h), resample=Image.BICUBIC)
         image = np.array(image)
         return image

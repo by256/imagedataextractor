@@ -5,6 +5,7 @@
 ### TODO
 
 - Add segmentation module.
+- Add uncertainty and monte carlo predictions.
 - fix paths for loading pytorch model in segmentation.
 
 ## Analysis
