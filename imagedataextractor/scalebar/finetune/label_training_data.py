@@ -29,7 +29,7 @@ parser.add_argument('--target-dir',
 args = parser.parse_args()
 
 image_paths = os.listdir(args.images_dir)
-image_paths = [args.images_dir+x for x in image_paths if x.endswith('png')]
+image_paths = [args.images_dir+x for x in image_paths if x.endswith('.png')]
 
 images = []
 
@@ -42,8 +42,9 @@ for path in tqdm(image_paths):
     for roi in rois:
         roi = np.array(roi)
         images.append(roi)
+        break # only append the first one
 
-image_count = 1
+image_count = 1000 # change this back to 1
 
 for i, image in enumerate(images):
     plot_thread = multiprocessing.Process(target=show_image, args=(image,))
