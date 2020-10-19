@@ -5,7 +5,7 @@ from .nnmodules import BranchedERFNet
 from .cluster import Cluster
 
 
-class ParticleSegmentation:
+class ParticleSegmenter:
 
     def __init__(self, device='cpu'):
         self.seg_model = BranchedERFNet(num_classes=[4, 1]).to(device)
