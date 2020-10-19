@@ -15,7 +15,7 @@ class DownsamplerBlock (nn.Module):
     def forward(self, input):
         output = torch.cat([self.conv(input), self.pool(input)], 1)
         output = self.bn(output)
-        return F.relu(output)
+        return F.elu(output)
 
 
 class non_bottleneck_1d (nn.Module):
@@ -43,20 +43,20 @@ class non_bottleneck_1d (nn.Module):
     def forward(self, input):
 
         output = self.conv3x1_1(input)
-        output = F.relu(output)
+        output = F.elu(output)
         output = self.conv1x3_1(output)
         output = self.bn1(output)
-        output = F.relu(output)
+        output = F.elu(output)
 
         output = self.conv3x1_2(output)
-        output = F.relu(output)
+        output = F.elu(output)
         output = self.conv1x3_2(output)
         output = self.bn2(output)
 
         if (self.dropout.p != 0):
             output = self.dropout(output)
 
-        return F.relu(output+input)  # +input = identity (residual connection)
+        return F.elu(output+input)
 
 
 class Encoder(nn.Module):
@@ -105,7 +105,7 @@ class UpsamplerBlock (nn.Module):
         output = F.interpolate(input, scale_factor=2, mode='bilinear', align_corners=False)
         output = self.conv(output)
         output = self.bn(output)
-        return F.relu(output)
+        return F.elu(output)
 
 
 class Decoder (nn.Module):
@@ -135,8 +135,8 @@ class Decoder (nn.Module):
 
         return output
 
-# ERFNet
 
+# ERFNet
 
 class Net(nn.Module):
     def __init__(self, num_classes, encoder=None):  # use encoder to pass pretrained encoder
@@ -159,6 +159,8 @@ class Net(nn.Module):
 class BranchedERFNet(nn.Module):
     def __init__(self, num_classes, encoder=None):
         super().__init__()
+
+        print('Creating branched erfnet with {} classes'.format(num_classes))
 
         if (encoder is None):
             self.encoder = Encoder(sum(num_classes))
