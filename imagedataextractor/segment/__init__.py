@@ -1,1 +1,1 @@
-from model import ParticleSegmenter
+from .model import ParticleSegmenter
