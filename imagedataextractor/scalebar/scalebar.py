@@ -78,10 +78,11 @@ class ScalebarDetector:
 
         if text is not None:
             scalebar_contour, scalebar_width = self.get_scalebar_line(rois[best_idx])
-            if scalebar_contour is not None:
-                value, units = self.parse_scalebar_text(text)
-                # move scalebar rect to pos in original image
-                scalebar_contour = scalebar_contour + np.array([roi_locs[best_idx][0], roi_locs[best_idx][1]])
-                conversion = value / scalebar_width
+        if scalebar_contour is not None:
+            value, units = self.parse_scalebar_text(text)
+            # move scalebar rect to pos in original image
+            scalebar_contour = scalebar_contour + np.array([roi_locs[best_idx][0], roi_locs[best_idx][1]])
+            conversion = value / scalebar_width
+            conversion = conversion * self.conversion_dict[units]  # 1 pixel = x meters
 
         return text, conversion, scalebar_contour
