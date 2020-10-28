@@ -86,8 +86,9 @@ class TextDetector:
         boxes = self.postprocess_detections(scores, geometry)
         return boxes
 
-    def get_text_rois(self, image: np.ndarray, scale: float=2, augment: bool=True) -> list:
+    def get_text_rois(self, image: np.ndarray, scale: float=3, augment: bool=True) -> list:
         rois = []
+        roi_locs = []
         boxes = self.detect_text(image)
         for x1, y1, x2, y2 in boxes:
             box_w = int(scale * (x2 - x1))
@@ -101,15 +102,18 @@ class TextDetector:
 
             roi_image = image[start_y:end_y, start_x:end_x]
             rois.append(roi_image)
+            roi_locs.append((start_x, start_y, end_x, end_y))
         
         if augment:
             inverted_rois = [255-x for x in rois]
             rois = rois + inverted_rois
 
-            blur = lambda x: np.array(Image.fromarray(x).filter(ImageFilter.GaussianBlur(radius=2)))
-            thresh = lambda x: cv2.adaptiveThreshold(cv2.cvtColor(x, cv2.COLOR_BGR2GRAY), 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 3, 2)
-            
-            thresh_rois = [thresh(blur(x)) for x in rois]
+            gray = lambda x: cv2.cvtColor(x, cv2.COLOR_BGR2GRAY)
+            blur = lambda x: cv2.GaussianBlur(x, (5,5), 0)
+            thresh = lambda x: cv2.threshold(x, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)[1]
+
+            thresh_rois = [thresh(blur(gray(x))) for x in rois]
 
             rois = rois + thresh_rois  # concat augmented rois
-        return rois
+            roi_locs = roi_locs * 4
+        return rois, roi_locs
