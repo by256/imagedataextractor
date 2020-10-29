@@ -61,7 +61,7 @@ class ParticleSegmenter:
         mc_outputs = torch.cat(mc_outputs, dim=0)
         mc_seed_maps = torch.cat(mc_seed_maps, dim=0)
 
-        # MC prediction (cluster mean on MC samples)
+        # MC prediction (cluster the mean of MC samples)
         mc_prediction, _ = cluster.cluster(mc_outputs.mean(dim=0))
 
         # Uncertainty
