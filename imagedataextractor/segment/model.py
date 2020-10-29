@@ -15,8 +15,8 @@ class ParticleSegmenter:
         Parameters
         ----------
         bayesian: bool
-        Option to use Bayesian inference for prediction. Trades off speed
-        for accuracy (recommended) (default is True).
+            Option to use Bayesian inference for prediction. Trades off speed
+            for accuracy (recommended) (default is True).
         n_samples: int
             Number of monte carlo samples used for Bayesian inference (default
             is 30).
