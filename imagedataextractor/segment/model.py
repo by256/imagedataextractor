@@ -9,6 +9,21 @@ from .uncertainty import expected_entropy, predictive_entropy, uncertainty_filte
 class ParticleSegmenter:
 
     def __init__(self, bayesian=True, n_samples=30, device='cpu'):
+        """
+        BPartIS particle segmentation model for particle identification.
+        
+        Parameters
+        ----------
+        bayesian: bool
+        Option to use Bayesian inference for prediction. Trades off speed
+        for accuracy (recommended) (default is True).
+        n_samples: int
+            Number of monte carlo samples used for Bayesian inference (default
+            is 30).
+        device: str {'cpu', 'cuda', None}
+            Selected device to run inference on. If None, will select 'cuda' if a
+            GPU is available, otherwise will default to 'cpu' (default is 'cpu').
+        """
         self.bayesian = bayesian
         self.n_samples = n_samples
         self.seg_model = BranchedERFNet(num_classes=[4, 1]).to(device).eval()
@@ -18,6 +33,7 @@ class ParticleSegmenter:
         self.device = device
 
     def preprocess(self, image):
+        """Pre-process image for segmentation model."""
         image = Image.fromarray(image)
         image = image.resize((512, 512), resample=Image.BICUBIC)
         image = np.array(image)
@@ -25,6 +41,7 @@ class ParticleSegmenter:
         return image
 
     def postprocess_pred(self, image, h, w):
+        """Post-process output segmentation map. Return output to the original input size."""
         image = Image.fromarray(image)
         image = image.resize((w, h), resample=Image.NEAREST)
         return np.array(image)
@@ -40,11 +57,13 @@ class ParticleSegmenter:
         return np.array(image)
 
     def enable_eval_dropout(self):
+        """Enables dropout in eval mode for Bayesian inference via Monte Carlo dropout."""
         for module in self.seg_model.modules():
             if 'Dropout' in type(module).__name__:
                 module.train()
 
     def monte_carlo_predict(self, image):
+        """Performs Bayesian inference and computes epistemic uncertainty."""
         h, w = image.shape[-2:]
         cluster = Cluster(n_sigma=2, h=h, w=w, device=self.device)
         self.enable_eval_dropout()
@@ -72,6 +91,7 @@ class ParticleSegmenter:
         return mc_prediction, epistemic
 
     def segment(self, image):
+        """Main segmentation routine."""
         o_h, o_w = image.shape[:2]
         image = self.preprocess(image)
         image = torch.FloatTensor(image).permute(2, 0, 1).unsqueeze(0).to(self.device)
@@ -81,7 +101,7 @@ class ParticleSegmenter:
             pred = uncertainty_filtering(pred, uncertainty)
             pred = pred.cpu().numpy()
             uncertainty = uncertainty.cpu().numpy()
-            # post-process nuncertainty for visualisation
+            # post-process uncertainty for visualisation
             uncertainty = self.postprocess_uncertainty(uncertainty, o_h, o_w)
         else:
             model_out = self.seg_model(image)[0].detach()
