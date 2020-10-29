@@ -1,5 +1,11 @@
+import cv2
 import numpy as np
 
+
+def aspect_ratio(contour):
+    x, y, w, h = cv2.boundingRect(contour)
+    aspect_ratio = w/h
+    return aspect_ratio
 
 def particle_size_hist(segmap, conversion, nbins=10, density=False):
     instances = np.unique(segmap)
