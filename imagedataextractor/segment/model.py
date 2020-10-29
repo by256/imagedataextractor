@@ -30,8 +30,10 @@ class ParticleSegmenter:
         self.model_path = '/home/by256/Documents/Projects/imagedataextractor/imagedataextractor/models/seg-model.pt'
         self.seg_model.load_state_dict(torch.load(self.model_path, map_location=device))
         self.cluster = Cluster(n_sigma=2, device=device)
+        if device is None:
+            device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.device = device
-
+        
     def preprocess(self, image):
         """Pre-process image for segmentation model."""
         image = Image.fromarray(image)
