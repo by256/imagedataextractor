@@ -75,6 +75,7 @@ class ScalebarDetector:
 
         scalebar_contour = None
         conversion = None
+        units = None
 
         if text is not None:
             scalebar_contour, scalebar_width = self.get_scalebar_line(rois[best_idx])
