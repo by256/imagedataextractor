@@ -86,4 +86,4 @@ class ScalebarDetector:
             conversion = value / scalebar_width
             conversion = conversion * self.conversion_dict[units]
 
-        return text, conversion, scalebar_contour
+        return text, units, conversion, scalebar_contour
