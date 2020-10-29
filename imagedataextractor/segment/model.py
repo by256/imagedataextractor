@@ -75,7 +75,7 @@ class ParticleSegmenter:
         mc_seed_maps = []
         for i in range(self.n_samples):
             output = self.seg_model(image).detach()
-            seed_map = torch.sigmoid(output[0, -1]).unsqueeze(0)
+            seed_map = torch.sigmoid(output[0, -1]).unsqueeze(0)  # \phi_{k}(e_{i})
             mc_outputs.append(output)
             mc_seed_maps.append(seed_map)
 
