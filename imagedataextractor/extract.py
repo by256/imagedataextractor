@@ -13,36 +13,32 @@ from scalebar import ScalebarDetector
 from segment import ParticleSegmenter
 
 
-def extract(inputs, out_dir, bayesian=True, device='cpu'):
+def extract(input_paths, out_dir, bayesian=True, device='cpu'):
     
-    # check wether inputs are images, or papers
-    for inp in inputs:
+    # check wether inputs are image or paper paths
+    for path in input_paths:
         # if inputs are image paths
-        if imghdr.what(inp) is not None:
-            im_path = inp
-            image = cv2.imread(im_path)
+        if imghdr.what(path) is not None:
+            image = cv2.imread(path)
 
-            file_ext = imghdr.what(im_path)
-            fn = im_path.split('/')[-1].split('.'+file_ext)[0]
+            file_ext = imghdr.what(path)
+            fn = path.split('/')[-1].split('.'+file_ext)[0]
             target_dir = os.path.join(out_dir, fn)
             if not os.path.exists(target_dir):
                 os.makedirs(target_dir)
-
-            extract_image(image, target_dir=target_dir, bayesian=bayesian)
+            extract_image(image, target_dir=target_dir, bayesian=bayesian, device=device)
         else:
             # else documents, therefore use chemdataextractor
-            cde_retrieve_images(inp)
+            cde_retrieve_images(path)
 
 def cde_retrieve_images(doc_path):
     raise NotImplementedError('This will be implemented upon the release of CDE 2.0.')
 
-def extract_image(image, target_dir, bayesian=True, min_particles=10):
-
-    
+def extract_image(image, target_dir, bayesian=True, min_particles=10, device='cpu'):
 
     # initialise detectors
     sb_detector = ScalebarDetector()
-    segmenter = ParticleSegmenter(bayesian=bayesian)
+    segmenter = ParticleSegmenter(bayesian=bayesian, device=device)
     shape_detector = ShapeDetector()
 
     output_image = image.copy()
@@ -188,4 +184,10 @@ import matplotlib.pyplot as plt
 
 #     # break
 
-print(imghdr.what('/home/by256/Documents/Projects/imagedataextractor/test/test_docs/a.html'))
+# test extract
+
+base_path = '/home/by256/Documents/Projects/particle-seg-dataset/elsevier/processed-images/'
+im_paths = os.listdir(base_path)
+im_paths = [os.path.join(base_path, x) for x in im_paths]
+out_dir = '/home/by256/Documents/Projects/imagedataextractor/test/test_out/'
+extract(im_paths, out_dir, bayesian=False, device='cpu')
