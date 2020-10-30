@@ -153,10 +153,10 @@ def extract_image(image, target_dir, bayesian=True, min_particles=10, device='cp
 
 #### tests ####
 
-import os
-import cv2
-import random
-import matplotlib.pyplot as plt
+# import os
+# import cv2
+# import random
+# import matplotlib.pyplot as plt
 
 # test cde retreive
 
@@ -186,8 +186,8 @@ import matplotlib.pyplot as plt
 
 # test extract
 
-base_path = '/home/by256/Documents/Projects/particle-seg-dataset/elsevier/processed-images/'
-im_paths = os.listdir(base_path)
-im_paths = [os.path.join(base_path, x) for x in im_paths]
-out_dir = '/home/by256/Documents/Projects/imagedataextractor/test/test_out/'
-extract(im_paths, out_dir, bayesian=False, device='cpu')
+# base_path = '/home/by256/Documents/Projects/particle-seg-dataset/elsevier/processed-images/'
+# im_paths = os.listdir(base_path)
+# im_paths = [os.path.join(base_path, x) for x in im_paths]
+# out_dir = '/home/by256/Documents/Projects/imagedataextractor/test/test_out/'
+# extract(im_paths, out_dir, bayesian=False, device='cpu')
