@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
+from chemdataextractor import Document
 
 from analysis import ShapeDetector
 from analysis.filtering import edge_filter
@@ -13,19 +14,31 @@ from segment import ParticleSegmenter
 
 
 def extract(inputs, out_dir, bayesian=True, device='cpu'):
+    
     # check wether inputs are images, or papers
-    pass
+    for inp in inputs:
+        # if inputs are image paths
+        if imghdr.what(inp) is not None:
+            im_path = inp
+            image = cv2.imread(im_path)
 
+            file_ext = imghdr.what(im_path)
+            fn = im_path.split('/')[-1].split('.'+file_ext)[0]
+            target_dir = os.path.join(out_dir, fn)
+            if not os.path.exists(target_dir):
+                os.makedirs(target_dir)
 
-def extract_image(im_path, out_dir, bayesian=True, min_particles=10):
+            extract_image(image, target_dir=target_dir, bayesian=bayesian)
+        else:
+            # else documents, therefore use chemdataextractor
+            cde_retrieve_images(inp)
 
-    image = cv2.imread(im_path)
+def cde_retrieve_images(doc_path):
+    raise NotImplementedError('This will be implemented upon the release of CDE 2.0.')
 
-    file_ext = imghdr.what(im_path)
-    fn = im_path.split('/')[-1].split('.'+file_ext)[0]
-    target_dir = os.path.join(out_dir, fn)
-    if not os.path.exists(target_dir):
-        os.makedirs(target_dir)
+def extract_image(image, target_dir, bayesian=True, min_particles=10):
+
+    
 
     # initialise detectors
     sb_detector = ScalebarDetector()
@@ -142,25 +155,37 @@ def extract_image(im_path, out_dir, bayesian=True, min_particles=10):
     results_df.to_csv(os.path.join(target_dir, 'data.csv'), index=False)
 
 
+#### tests ####
+
 import os
 import cv2
 import random
 import matplotlib.pyplot as plt
 
-base_path = '/home/by256/Documents/Projects/particle-seg-dataset/elsevier/processed-images/'
-im_paths = os.listdir(base_path)[10:]
-out_dir = '/home/by256/Documents/Projects/imagedataextractor/test/test_out'
-# random.shuffle(im_paths)
-im_paths = im_paths[10:]
+# test cde retreive
 
-# sb_detector = ScalebarDetector()
-for i, im_path in enumerate(im_paths):
-    print(im_path)
-    # try:
-    sb_detector = ScalebarDetector()
-    # image = cv2.imread(base_path + im_path)
-    extract_image(base_path + im_path, out_dir=out_dir, bayesian=True)
-    # except Exception as e:
-    #     print(e)
+# doc_path = '../test/test_docs/b.html'
+# cde_retrieve_images(doc_path)
 
-    # break
+
+# test extract_image
+
+# base_path = '/home/by256/Documents/Projects/particle-seg-dataset/elsevier/processed-images/'
+# im_paths = os.listdir(base_path)[10:]
+# out_dir = '/home/by256/Documents/Projects/imagedataextractor/test/test_out'
+# # random.shuffle(im_paths)
+# im_paths = im_paths[10:]
+
+# # sb_detector = ScalebarDetector()
+# for i, im_path in enumerate(im_paths):
+#     print(im_path)
+#     # try:
+#     sb_detector = ScalebarDetector()
+#     # image = cv2.imread(base_path + im_path)
+#     extract_image(base_path + im_path, out_dir=out_dir, bayesian=True)
+#     # except Exception as e:
+#     #     print(e)
+
+#     # break
+
+print(imghdr.what('/home/by256/Documents/Projects/imagedataextractor/test/test_docs/a.html'))
