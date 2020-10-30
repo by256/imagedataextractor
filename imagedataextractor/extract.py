@@ -86,7 +86,7 @@ def extract_image(im_path, out_dir, bayesian=True, min_particles=10):
         particle_data['edge'] = edge_cond
         # contours
         contours, _ = cv2.findContours(inst_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        # particle_data['contours'] = contours
+        particle_data['contours'] = contours
         output_image = cv2.drawContours(output_image, contours, -1, (60, 205, 24), 1)
         # aspect ratio
         ar = aspect_ratio(contours[0])
