@@ -6,26 +6,27 @@ class ShapeDetector:
 
     def __init__(self):
         pass
-    
+
     def detect_circle(self, mask):
 
         circle = False
 
         contours = self.get_contours(mask)
-        ellipse = cv2.fitEllipse(contours)
-        w, h = ellipse[1]
-        aspect_ratio = w/h
+        if len(contours) >= 5:
+            ellipse = cv2.fitEllipse(contours)
+            w, h = ellipse[1]
+            aspect_ratio = w/h
 
-        ellipse_image = np.zeros_like(mask.copy(), dtype=np.uint8)
-        ellipse_image = cv2.ellipse(ellipse_image, ellipse, color=(255,255,255), thickness=-1)
-        ellipse_image = (ellipse_image > 0).astype(np.uint8)
+            ellipse_image = np.zeros_like(mask.copy(), dtype=np.uint8)
+            ellipse_image = cv2.ellipse(ellipse_image, ellipse, color=(255,255,255), thickness=-1)
+            ellipse_image = (ellipse_image > 0).astype(np.uint8)
 
-        intersection = np.sum(np.logical_and(mask, ellipse_image))
-        union = np.sum(np.logical_or(mask, ellipse_image))
-        iou = intersection / union
+            intersection = np.sum(np.logical_and(mask, ellipse_image))
+            union = np.sum(np.logical_or(mask, ellipse_image))
+            iou = intersection / union
 
-        if aspect_ratio > 0.85 and iou > 0.95:
-            circle = True
+            if aspect_ratio > 0.85 and iou > 0.95:
+                circle = True
         
         return circle
 
