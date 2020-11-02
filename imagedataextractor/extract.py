@@ -32,7 +32,7 @@ def extract(input_paths, out_dir, bayesian=True, device='cpu'):
             cde_retrieve_images(path)
 
 def cde_retrieve_images(doc_path):
-    raise NotImplementedError('This will be implemented upon the release of CDE 2.0.')
+    raise NotImplementedError('Extraction from documents will be implemented upon the release of CDE 2.0.')
 
 def extract_image(image, target_dir, bayesian=True, min_particles=10, device='cpu'):
 
