@@ -8,7 +8,7 @@ from .uncertainty import expected_entropy, predictive_entropy, uncertainty_filte
 
 class ParticleSegmenter:
 
-    def __init__(self, bayesian=True, n_samples=30, device='cpu'):
+    def __init__(self, bayesian=True, n_samples=40, device='cpu'):
         """
         BPartIS particle segmentation model for particle identification.
         
@@ -19,7 +19,7 @@ class ParticleSegmenter:
             for accuracy (recommended) (default is True).
         n_samples: int
             Number of monte carlo samples used for Bayesian inference (default
-            is 30).
+            is 40).
         device: str {'cpu', 'cuda', None}
             Selected device to run inference on. If None, will select 'cuda' if a
             GPU is available, otherwise will default to 'cpu' (default is 'cpu').
