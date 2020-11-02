@@ -49,16 +49,6 @@ class ScalebarDetector:
         contours, _ = cv2.findContours(roi, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         scalebar_contour, scalebar_width = self.filter_scalebar_contours(contours)
         
-        # if scalebar_contour is not None:
-        #     import matplotlib.pyplot as plt
-        #     # for i, contour in enumerate(contours):
-            
-        #     roi = np.stack([roi, roi, roi], axis=-1)
-        #     x, y, w, h = cv2.boundingRect(scalebar_contour)
-        #     cv2.rectangle(roi, (x, y), (x + w, y + h), (0, 255, 0), 3)
-        #     plt.imshow(roi)#, cmap='gray')
-        #     plt.title('scalebar = {} pixels'.format(scalebar_width))
-        #     plt.show()
         if scalebar_contour is not None:
             scalebar_contour = (scalebar_contour / resize_factor).astype(int)
             scalebar_width = scalebar_width / resize_factor
