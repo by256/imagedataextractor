@@ -101,10 +101,10 @@ def extract_image(image, target_dir, bayesian=True, min_particles=10, device='cp
         ar = aspect_ratio(contours[0])
         particle_data['aspect_ratio'] = ar
         # shape estimate
-        shape = shape_detector.detect(inst_mask)
-        particle_data['shape_estimate'] = shape[0]
-        # diameter
-        if shape[0] == 'circle':
+        circle = shape_detector.detect_circle(inst_mask)
+        if circle:
+            particle_data['shape_estimate'] = 'circle'
+            # diameter
             diameter = 2*np.sqrt(area/np.pi)
             particle_data['diameter'] = diameter
         # particle instance uncertainty
@@ -153,10 +153,10 @@ def extract_image(image, target_dir, bayesian=True, min_particles=10, device='cp
 
 #### tests ####
 
-# import os
-# import cv2
-# import random
-# import matplotlib.pyplot as plt
+import os
+import cv2
+import random
+import matplotlib.pyplot as plt
 
 # test cde retreive
 
@@ -169,7 +169,7 @@ def extract_image(image, target_dir, bayesian=True, min_particles=10, device='cp
 # base_path = '/home/by256/Documents/Projects/particle-seg-dataset/elsevier/processed-images/'
 # im_paths = os.listdir(base_path)[10:]
 # out_dir = '/home/by256/Documents/Projects/imagedataextractor/test/test_out'
-# # random.shuffle(im_paths)
+# random.shuffle(im_paths)
 # im_paths = im_paths[10:]
 
 # # sb_detector = ScalebarDetector()
@@ -177,8 +177,8 @@ def extract_image(image, target_dir, bayesian=True, min_particles=10, device='cp
 #     print(im_path)
 #     # try:
 #     sb_detector = ScalebarDetector()
-#     # image = cv2.imread(base_path + im_path)
-#     extract_image(base_path + im_path, out_dir=out_dir, bayesian=True)
+#     image = cv2.imread(base_path + im_path)
+#     extract_image(image, out_dir, bayesian=False)
 #     # except Exception as e:
 #     #     print(e)
 
@@ -186,8 +186,8 @@ def extract_image(image, target_dir, bayesian=True, min_particles=10, device='cp
 
 # test extract
 
-# base_path = '/home/by256/Documents/Projects/particle-seg-dataset/elsevier/processed-images/'
-# im_paths = os.listdir(base_path)
-# im_paths = [os.path.join(base_path, x) for x in im_paths]
-# out_dir = '/home/by256/Documents/Projects/imagedataextractor/test/test_out/'
-# extract(im_paths, out_dir, bayesian=False, device='cpu')
+base_path = '/home/by256/Documents/Projects/particle-seg-dataset/elsevier/processed-images/'
+im_paths = os.listdir(base_path)
+im_paths = [os.path.join(base_path, x) for x in im_paths]
+out_dir = '/home/by256/Documents/Projects/imagedataextractor/test/test_out/'
+extract(im_paths, out_dir, bayesian=False, device='cpu')
