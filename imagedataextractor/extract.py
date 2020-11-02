@@ -19,11 +19,10 @@ def extract(input_paths, out_dir, bayesian=True, device='cpu'):
     # check wether inputs are image or paper paths
     for path in input_paths:
         # if inputs are image paths
-        if imghdr.what(path) is not None:
+        img_file_ext = imghdr.what(path)
+        if img_file_ext is not None:
             image = cv2.imread(path)
-
-            file_ext = imghdr.what(path)
-            fn = path.split('/')[-1].split('.'+file_ext)[0]
+            fn = path.split('/')[-1].split('.'+img_file_ext)[0]
             target_dir = os.path.join(out_dir, fn)
             if not os.path.exists(target_dir):
                 os.makedirs(target_dir)
