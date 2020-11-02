@@ -1,1 +1,1 @@
-from .particlesize import particle_size_hist
+from .shapedetect import ShapeDetector
