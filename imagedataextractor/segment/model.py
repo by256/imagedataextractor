@@ -100,6 +100,7 @@ class ParticleSegmenter:
         if self.bayesian:
             # monte carlo predict
             pred, uncertainty = self.monte_carlo_predict(image)
+            original = pred.cpu().numpy().copy()
             pred = uncertainty_filtering(pred, uncertainty)
             pred = pred.cpu().numpy()
             uncertainty = uncertainty.cpu().numpy()
@@ -109,5 +110,6 @@ class ParticleSegmenter:
             model_out = self.seg_model(image)[0].detach()
             pred = self.cluster.cluster(model_out)[0].cpu().numpy()
             uncertainty = None
+            original = None
         pred = self.postprocess_pred(pred, o_h, o_w)
-        return pred, uncertainty
+        return pred, uncertainty, original
