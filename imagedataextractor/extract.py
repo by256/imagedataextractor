@@ -42,6 +42,7 @@ def extract_image(image, target_dir, bayesian=True, min_particles=10, device='cp
     shape_detector = ShapeDetector()
 
     output_image = image.copy()
+    scalebar_image = image.copy()
 
     # detect scalebar
     text, units, conversion, scalebar_contour = sb_detector.detect(image)
@@ -49,10 +50,14 @@ def extract_image(image, target_dir, bayesian=True, min_particles=10, device='cp
     if scalebar_contour is not None:
         x, y, w, h = cv2.boundingRect(scalebar_contour)
         cv2.rectangle(output_image, (x, y), (x + w, y + h), (24, 24, 205), 1)
+        cv2.putText(output_image, text, (image.shape[1]//2, image.shape[0]//2), cv2.FONT_HERSHEY_SIMPLEX, 1, color=(24, 24, 205))
+        cv2.rectangle(scalebar_image, (x, y), (x + w, y + h), (24, 24, 205), 1)
+        cv2.putText(scalebar_image, text, (image.shape[1]//2, image.shape[0]//2), cv2.FONT_HERSHEY_SIMPLEX, 1, color=(24, 24, 205))
 
     # segment particles
-    particle_preds, uncertainty = segmenter.segment(image)
+    particle_preds, uncertainty, original = segmenter.segment(image)
     particle_preds = particle_preds.astype(float)
+    original = original.astype(float)
 
     particles = []
     
@@ -138,9 +143,12 @@ def extract_image(image, target_dir, bayesian=True, min_particles=10, device='cp
     
     # create and save outputs
     cv2.imwrite(os.path.join(target_dir, 'image.png'), output_image)
+    cv2.imwrite(os.path.join(target_dir, 'scalebar.png'), scalebar_image)
 
     seg_cmap = matplotlib.cm.tab20
     seg_cmap.set_bad(color='k')
+    original[original == 0.0] = np.nan
+    plt.imsave(os.path.join(target_dir, 'pre.png'), original, cmap=seg_cmap)
     particle_preds[particle_preds == 0.0] = np.nan
     plt.imsave(os.path.join(target_dir, 'seg.png'), particle_preds, cmap=seg_cmap)
     particle_preds_filtered[particle_preds_filtered == 0.0] = np.nan
@@ -189,5 +197,10 @@ import matplotlib.pyplot as plt
 base_path = '/home/by256/Documents/Projects/particle-seg-dataset/elsevier/processed-images/'
 im_paths = os.listdir(base_path)
 im_paths = [os.path.join(base_path, x) for x in im_paths]
+random.shuffle(im_paths)
+
+# im_paths = [
+#     '/home/by256/Documents/Projects/particle-seg-dataset/elsevier/processed-images/10.1016.j.porgcoat.2019.05.018.gr1.png'
+# ]
 out_dir = '/home/by256/Documents/Projects/imagedataextractor/test/test_out/'
-extract(im_paths, out_dir, bayesian=False, device='cpu')
+extract(im_paths, out_dir, bayesian=True, device='cpu')
