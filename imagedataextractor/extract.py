@@ -1,17 +1,20 @@
 import os
 import cv2
+import copy
 import imghdr
 import numpy as np
 import pandas as pd
 import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from chemdataextractor import Document
 
-from analysis import ShapeDetector
-from analysis.filtering import edge_filter
-from analysis.particlesize import aspect_ratio
-from scalebar import ScalebarDetector
-from segment import ParticleSegmenter
+from .analysis import ShapeDetector
+from .analysis.filtering import edge_filter
+from .analysis.particlesize import aspect_ratio
+from .scalebar import ScalebarDetector
+from .segment import ParticleSegmenter
+from .utils import get_contours
 
 
 def extract(input_paths, out_dir, bayesian=True, device='cpu'):
@@ -100,6 +103,7 @@ def extract_image(image, target_dir, bayesian=True, min_particles=10, device='cp
         particle_data['edge'] = edge_cond
         # contours
         contours, _ = cv2.findContours(inst_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        # contours = get_contours(inst_mask)
         particle_data['contours'] = contours
         output_image = cv2.drawContours(output_image, contours, -1, (60, 205, 24), 1)
         # aspect ratio
@@ -142,10 +146,10 @@ def extract_image(image, target_dir, bayesian=True, min_particles=10, device='cp
 
     
     # create and save outputs
-    cv2.imwrite(os.path.join(target_dir, 'image.png'), output_image)
+    cv2.imwrite(os.path.join(target_dir, 'det.png'), output_image)
     cv2.imwrite(os.path.join(target_dir, 'scalebar.png'), scalebar_image)
 
-    seg_cmap = matplotlib.cm.tab20
+    seg_cmap = copy.copy(matplotlib.cm.tab20)
     seg_cmap.set_bad(color='k')
     original[original == 0.0] = np.nan
     plt.imsave(os.path.join(target_dir, 'pre.png'), original, cmap=seg_cmap)
@@ -161,10 +165,10 @@ def extract_image(image, target_dir, bayesian=True, min_particles=10, device='cp
 
 #### tests ####
 
-import os
-import cv2
-import random
-import matplotlib.pyplot as plt
+# import os
+# import cv2
+# import random
+# import matplotlib.pyplot as plt
 
 # test cde retreive
 
@@ -194,13 +198,13 @@ import matplotlib.pyplot as plt
 
 # test extract
 
-base_path = '/home/by256/Documents/Projects/particle-seg-dataset/elsevier/processed-images/'
-im_paths = os.listdir(base_path)
-im_paths = [os.path.join(base_path, x) for x in im_paths]
-random.shuffle(im_paths)
+# base_path = '/home/by256/Documents/Projects/particle-seg-dataset/elsevier/processed-images/'
+# im_paths = os.listdir(base_path)
+# im_paths = [os.path.join(base_path, x) for x in im_paths]
+# random.shuffle(im_paths)
 
-# im_paths = [
-#     '/home/by256/Documents/Projects/particle-seg-dataset/elsevier/processed-images/10.1016.j.porgcoat.2019.05.018.gr1.png'
-# ]
-out_dir = '/home/by256/Documents/Projects/imagedataextractor/test/test_out/'
-extract(im_paths, out_dir, bayesian=True, device='cpu')
+# # im_paths = [
+# #     '/home/by256/Documents/Projects/particle-seg-dataset/elsevier/processed-images/10.1016.j.porgcoat.2019.05.018.gr1.png'
+# # ]
+# out_dir = '/home/by256/Documents/Projects/imagedataextractor/test/test_out/'
+# extract(im_paths, out_dir, bayesian=True, device='cpu')
