@@ -1,0 +1,6 @@
+matplotlib=2.2.4=pypi_0
+numpy=1.18.1=pypi_0
+opencv-python=4.2.0.32=pypi_0
+pytesseract=0.3.3=pypi_0
+torch=1.6.0=pypi_0
+
