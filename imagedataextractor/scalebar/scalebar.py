@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 from .ocr import OCR
 from .textdetection import TextDetector
+from .utils import get_contours
 
 
 class ScalebarDetector:
@@ -47,6 +48,7 @@ class ScalebarDetector:
         if n_black > n_white:
             roi = 255 - roi
         contours, _ = cv2.findContours(roi, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        # contours = get_contours(roi)
         scalebar_contour, scalebar_width = self.filter_scalebar_contours(contours)
         
         if scalebar_contour is not None:
@@ -78,3 +80,5 @@ class ScalebarDetector:
             conversion = conversion * self.conversion_dict[units]
 
         return text, units, conversion, scalebar_contour
+
+    

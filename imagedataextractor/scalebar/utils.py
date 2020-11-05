@@ -1,3 +1,4 @@
+import cv2
 import numpy as np
 
 
@@ -68,3 +69,12 @@ def non_max_suppression(boxes, probs=None, overlapThresh=0.3):
 
     # return only the bounding boxes that were picked
     return boxes[pick].astype("int")
+
+def get_contours(x):
+    contours = cv2.findContours(x.copy(), cv2.RETR_EXTERNAL,
+                                cv2.CHAIN_APPROX_SIMPLE)
+    if len(contours) == 2:
+        contours = contours[0]#[0]
+    elif len(contours) == 3:
+        contours = contours[1]#[0]
+    return contours
