@@ -101,6 +101,7 @@ class ParticleSegmenter:
             # monte carlo predict
             pred, uncertainty = self.monte_carlo_predict(image)
             original = pred.cpu().numpy().copy()
+            original = self.postprocess_pred(original, o_h, o_w)
             pred = uncertainty_filtering(pred, uncertainty)
             pred = pred.cpu().numpy()
             uncertainty = uncertainty.cpu().numpy()
