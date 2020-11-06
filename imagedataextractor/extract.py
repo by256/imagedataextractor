@@ -14,7 +14,7 @@ from .analysis.filtering import edge_filter
 from .analysis.particlesize import aspect_ratio
 from .scalebar import ScalebarDetector
 from .segment import ParticleSegmenter
-from .utils import get_contours
+from .utils import get_contours, shuffle_segmap
 
 
 def extract(input_paths, out_dir, bayesian=True, device='cpu'):
@@ -61,6 +61,7 @@ def extract_image(image, target_dir, bayesian=True, min_particles=10, device='cp
 
     # segment particles
     particle_preds, uncertainty, original = segmenter.segment(image)
+    particle_preds = shuffle_segmap(particle_preds)  # for vis purposes
     particle_preds = particle_preds.astype(float)
     original = original.astype(float)
 
