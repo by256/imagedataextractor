@@ -57,7 +57,7 @@ def extract_image(image, target_dir, bayesian=True, min_particles=10, device='cp
         cv2.rectangle(scalebar_image, (x, y), (x + w, y + h), (24, 24, 205), 1)
         cv2.putText(scalebar_image, text, (image.shape[1]//2, image.shape[0]//2), cv2.FONT_HERSHEY_SIMPLEX, 1, color=(24, 24, 205))
     else:
-        cv2.putText(scalebar_image, 'Scalebar not found.', (image.shape[1]//2, image.shape[0]//2), cv2.FONT_HERSHEY_SIMPLEX, 1, color=(24, 24, 205))
+        cv2.putText(scalebar_image, 'Scalebar not found.', (image.shape[1]//4, 3*image.shape[0]//4), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color=(24, 24, 205))
 
     # segment particles
     particle_preds, uncertainty, original = segmenter.segment(image)
