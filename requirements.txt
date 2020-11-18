@@ -1,3 +1,4 @@
+rdfpy=0.1.5=pypi_0
 matplotlib=2.2.4=pypi_0
 numpy=1.18.1=pypi_0
 opencv-python=4.2.0.32=pypi_0
