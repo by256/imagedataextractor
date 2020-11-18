@@ -7,6 +7,7 @@ import pandas as pd
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from rdfpy import rdf2d
 from chemdataextractor import Document
 
 from .analysis import ShapeDetector
@@ -76,6 +77,7 @@ def extract_image(image, target_dir, bayesian=True, min_particles=10, device='cp
                         'center': None, 
                         'edge': None,
                         'contours': None,
+                        'area (pixels^2)': None,
                         'area': None, 
                         'area_units': None,
                         'aspect_ratio': None, 
@@ -89,6 +91,7 @@ def extract_image(image, target_dir, bayesian=True, min_particles=10, device='cp
 
         # area
         area = np.sum(inst_mask)  # pixels
+        particle_data['area (pixels^2)'] = area
         if conversion is not None:
             area = area * conversion**2  # meters^2
             particle_data['area_units'] = 'meters^2'
@@ -137,6 +140,7 @@ def extract_image(image, target_dir, bayesian=True, min_particles=10, device='cp
         particle_sizes =  np.array(valid_particles_df['area'])
 
         counts, bins = np.histogram(particle_sizes, bins='rice')
+        hist_fig = plt.figure()
         plt.bar(bins[:-1] + np.diff(bins) / 2, counts, np.diff(bins), color='k', edgecolor='k', alpha=0.6)
         plt.ylabel('Count')
         if units is not None:
@@ -145,8 +149,22 @@ def extract_image(image, target_dir, bayesian=True, min_particles=10, device='cp
             xlabel = 'Particle Size: (Pixels^2)'
         plt.xlabel(xlabel)
         plt.savefig(os.path.join(target_dir, 'sizehist.png'), bbox_inches='tight', pad_inches=0.1)
-        plt.close()
+        plt.close(hist_fig)
 
+    # rdf
+    if N > min_particles:
+        center_coords = np.array(list(results_df['center']))
+        dr = np.sqrt(np.mean(results_df['area (pixels^2)'])) / 4
+        g_r, radii = rdf2d(center_coords, dr=dr)
+        
+        rdf_fig = plt.figure(figsize=(10, 6))
+        plt.plot(radii, g_r, color='k')
+
+        plt.ylabel('g(r)')
+        plt.xlabel('r (nm)')
+        plt.savefig(os.path.join(target_dir, 'rdf.png'), bbox_inches='tight', pad_inches=0.1)
+        plt.close(rdf_fig)
+        np.savetxt(os.path.join(target_dir, 'rdf.txt'), np.stack([radii, g_r], axis=-1))
     
     # create and save outputs
     cv2.imwrite(os.path.join(target_dir, 'det.png'), output_image)
