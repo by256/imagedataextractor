@@ -7,7 +7,7 @@ ImageDataExtractor is a Python library for electron microscopy image quantificat
 - Automatic detection and download of microscopy images from scientific articles.
 - Particle segmentation with uncertainty quantification.
 - Particle localization.
-- Automatic scalebar detection.
+- Automatic scalebar detection (reading and measurement).
 - Particle size distributions.
 - Obtain locations, sizes and aspect ratios of all particles in an image (in the form of a .csv file).
 - Radial distribution functions from extracted particle systems.
