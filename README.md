@@ -1,4 +1,4 @@
-# imagedataextractor 2.0
+# imagedataextractor 2
 
 **imagedataextractor** is a Python library for electron microscopy image quantification.
 
@@ -9,7 +9,7 @@
 - Particle localization.
 - Automatic scalebar detection (reading and measurement).
 - Particle size distributions.
-- Obtain locations, sizes and aspect ratios of all particles in an image (in the form of a .csv file).
+- Locations, sizes and aspect ratios of all particles in an image (in the form of a .csv file).
 - Radial distribution functions of extracted particle systems.
 
 ## Installation
