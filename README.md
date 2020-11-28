@@ -1,4 +1,4 @@
-# ImageDataExtractor 2.0
+# imagedataextractor 2.0
 
 **imagedataextractor** is a Python library for electron microscopy image quantification.
 
