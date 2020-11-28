@@ -1,6 +1,6 @@
 # ImageDataExtractor 2.0
 
-ImageDataExtractor is a Python library for electron microscopy image quantification.
+**imagedataextractor** is a Python library for electron microscopy image quantification.
 
 ## Features
 
@@ -18,3 +18,11 @@ ImageDataExtractor is a Python library for electron microscopy image quantificat
 pip install imagedataextractor
 ```
 
+## Citing
+
+If you use **imagedataextractor** in your work, please cite the following works:
+
+
+B. Yildirim, J. M. Cole, "Bayesian Particle Instance Segmentation for Electron Microscopy Image Quantification", *J. Chem. Inf. Model.* (2020)  https://doi.org/10.1021/acs.jcim.xxxxxxx
+
+K. T. Mukaddem, E. J. Beard, B. Yildirim, J. M. Cole, "ImageDataExtractor: A Tool to Extract and Quantify Data from Microscopy Images", *J. Chem. Inf. Model.* (2019) https://doi.org/10.1021/acs.jcim.9b00734
