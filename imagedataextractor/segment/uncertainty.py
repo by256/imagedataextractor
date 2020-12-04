@@ -11,7 +11,7 @@ def expected_entropy(mc_preds):
 def predictive_entropy(mc_preds):
     return entropy(torch.mean(mc_preds, dim=0))
 
-def uncertainty_filtering(prediction, uncertainty, t=0.0125):
+def uncertainty_filtering(prediction, uncertainty, tu=0.0125):
 
     filtered_pred = torch.zeros_like(prediction)
 
@@ -20,7 +20,7 @@ def uncertainty_filtering(prediction, uncertainty, t=0.0125):
             continue
         inst_mask = prediction == inst_id
         inst_uncertainty = torch.mean(uncertainty[inst_mask])
-        if inst_uncertainty < t:
+        if inst_uncertainty < tu:
             filtered_pred[inst_mask] = torch.max(filtered_pred) + 1
 
     return filtered_pred

@@ -8,7 +8,7 @@ from .uncertainty import expected_entropy, predictive_entropy, uncertainty_filte
 
 class ParticleSegmenter:
 
-    def __init__(self, bayesian=True, n_samples=40, device='cpu'):
+    def __init__(self, bayesian=True, n_samples=30, tu=0.0125, device='cpu'):
         """
         BPartIS particle segmentation model for particle identification.
         
@@ -26,6 +26,7 @@ class ParticleSegmenter:
         """
         self.bayesian = bayesian
         self.n_samples = n_samples
+        self.tu = tu
         self.seg_model = BranchedERFNet(num_classes=[4, 1]).to(device).eval()
         self.model_path = '/home/by256/Documents/Projects/imagedataextractor/imagedataextractor/models/seg-model.pt'
         self.seg_model.load_state_dict(torch.load(self.model_path, map_location=device))
@@ -102,7 +103,7 @@ class ParticleSegmenter:
             pred, uncertainty = self.monte_carlo_predict(image)
             original = pred.cpu().numpy().copy()
             original = self.postprocess_pred(original, o_h, o_w)
-            pred = uncertainty_filtering(pred, uncertainty)
+            pred = uncertainty_filtering(pred, uncertainty, tu=self.tu)
             pred = pred.cpu().numpy()
             uncertainty = uncertainty.cpu().numpy()
             # post-process uncertainty for visualisation
