@@ -1,3 +1,4 @@
+import os
 import cv2
 import numpy as np
 import pytesseract
@@ -14,9 +15,7 @@ class TextDetector:
     """
 
     def __init__(self):
-        # self.model_path = '../models/frozen_east_text_detection.pb'
-        self.model_path = '/home/by256/Documents/Projects/imagedataextractor/imagedataextractor/models/frozen_east_text_detection.pb'
-        # self.model_path = '/Users/batuhan/Documents/Projects/imagedataextractor/imagedataextractor/models/frozen_east_text_detection.pb'
+        self.model_path = self.model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../models/frozen_east_text_detection.pb')
         self.layer_names = ["feature_fusion/Conv_7/Sigmoid", "feature_fusion/concat_3"]
         self.model = cv2.dnn.readNet(self.model_path)
         self.blob_params = {'scalefactor': 1.0, 

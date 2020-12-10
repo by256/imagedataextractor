@@ -1,3 +1,4 @@
+import os
 import torch
 import numpy as np
 from PIL import Image
@@ -28,7 +29,7 @@ class ParticleSegmenter:
         self.n_samples = n_samples
         self.tu = tu
         self.seg_model = BranchedERFNet(num_classes=[4, 1]).to(device).eval()
-        self.model_path = '/home/by256/Documents/Projects/imagedataextractor/imagedataextractor/models/seg-model.pt'
+        self.model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../models/seg-model.pt')
         self.seg_model.load_state_dict(torch.load(self.model_path, map_location=device))
         self.cluster = Cluster(n_sigma=2, device=device)
         if device is None:
