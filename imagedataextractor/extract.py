@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 from rdfpy import rdf2d
 from chemdataextractor import Document
 
+from .figsplit import figsplit
 from .analysis import ShapeDetector
 from .analysis.filtering import edge_filter
 from .analysis.particlesize import aspect_ratio
@@ -18,24 +19,54 @@ from .segment import ParticleSegmenter
 from .utils import get_contours, shuffle_segmap
 
 
-def extract(input_paths, out_dir, bayesian=True, device='cpu'):
+def extract(input_path, out_dir, bayesian=True, device='cpu'):
+    """Extract from single image, single doc, directory of images, or directory of docs."""
     
-    # check wether inputs are image or paper paths
-    for path in input_paths:
-        # if inputs are image paths
-        img_file_ext = imghdr.what(path)
-        if img_file_ext is not None:
-            image = cv2.imread(path)
-            fn = path.split('/')[-1].split('.'+img_file_ext)[0]
+    allowed_doc_exts = ['.html', '.xml', '.json', '.pdf']
+
+    # single image
+    if os.path.isfile(input_path):
+        if imghdr.what(input_path) is not None:
+            fn = input_path.split('/')[-1].split('.'+imghdr.what(input_path))[0]
             target_dir = os.path.join(out_dir, fn)
-            if not os.path.exists(target_dir):
-                os.makedirs(target_dir)
-            extract_image(image, target_dir=target_dir, bayesian=bayesian, device=device)
-        else:
-            # else documents, therefore use chemdataextractor
-            extract_document(path)
+            image = cv2.imread(input_path)
+            _figsplit_mkdir_and_extract(image, target_dir=target_dir, bayesian=bayesian, device=device)
+    # single document
+    elif os.path.splitext(input_path)[1] in allowed_doc_exts:
+        pass
+    # directory of images or documents
+    elif os.path.isdir(input_path):
+        for f in os.listdir(input_path):
+            # image
+            file_ext = imghdr.what(os.path.join(input_path, f))
+            if file_ext is not None:
+                fn = f.split('/')[-1].split('.'+file_ext)[0]
+                target_dir = os.path.join(out_dir, fn)
+                image = cv2.imread(os.path.join(input_path, f))
+                _figsplit_mkdir_and_extract(image, target_dir=target_dir, bayesian=bayesian, device=device)
+            # document
+            if os.path.splitext(os.listdir(input_path)[0]) in allowed_doc_exts:
+                pass
+
+def _figsplit_mkdir_and_extract(image, target_dir, bayesian, device):
+    """Private function that combines figsplit, creation of output dir, and extract split images."""    
+    images = figsplit(image)
+    if len(images) == 1:
+        if not os.path.exists(target_dir):
+            os.makedirs(target_dir)
+        extract_image(image, target_dir=target_dir, bayesian=bayesian, device=device)
+    elif len(images) > 1:
+        for i, image in enumerate(images):
+            split_target_dir = os.path.join(target_dir, str(i))
+            if not os.path.exists(split_target_dir):
+                os.makedirs(split_target_dir)
+            extract_image(image, target_dir=split_target_dir, bayesian=bayesian, device=device)
+
 
 def extract_image(image, target_dir, bayesian=True, min_particles=10, device='cpu'):
+    """
+    Extract from a single image (not a panel).
+    """
 
     # initialise detectors
     sb_detector = ScalebarDetector()
@@ -181,14 +212,11 @@ def extract_image(image, target_dir, bayesian=True, min_particles=10, device='cp
     results_df.to_csv(os.path.join(target_dir, 'data.csv'), index=False)
 
 def extract_document(doc_path):
+    """Extract from single document."""
     raise NotImplementedError('Extraction from documents will be implemented upon the release of CDE 2.0.')
 
-def extract_images(images_dir):
-    raise NotImplementedError()
-
-def extract_documents(docs_dir):
-    raise NotImplementedError('Extraction from documents will be implemented upon the release of CDE 2.0.')
-
+extract_images = extract
+extract_documents = extract
 
 #### tests ####
 
@@ -223,15 +251,17 @@ def extract_documents(docs_dir):
 
 #     # break
 
-# test extract
+# test extract (dir of images)
 
 # base_path = '/home/by256/Documents/Projects/particle-seg-dataset/elsevier/processed-images/'
-# im_paths = os.listdir(base_path)
+# im_paths = os.listdir(base_path)[:3]
 # im_paths = [os.path.join(base_path, x) for x in im_paths]
 # random.shuffle(im_paths)
 
-# # im_paths = [
-# #     '/home/by256/Documents/Projects/particle-seg-dataset/elsevier/processed-images/10.1016.j.porgcoat.2019.05.018.gr1.png'
-# # ]
-# out_dir = '/home/by256/Documents/Projects/imagedataextractor/test/test_out/'
-# extract(im_paths, out_dir, bayesian=True, device='cpu')
+# out_dir = '/home/by256/Documents/Projects/imagedataextractor/test/test_out3/'
+# extract(base_path, out_dir, bayesian=True, device='cpu')
+
+# test extract (single images)
+# im_path = '/home/by256/Documents/Projects/ideweb/ideweb/static/img/0_C6CE01551D_fig1_2.png'
+# out_dir = '/home/by256/Documents/Projects/imagedataextractor/test/test_out3/'
+# extract(im_path, out_dir, bayesian=True, device='cpu')
