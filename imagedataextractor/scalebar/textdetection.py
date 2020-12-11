@@ -68,14 +68,14 @@ class TextDetector:
         boxes = non_max_suppression(rects, probs=confidences, overlapThresh=0.3)
         return boxes
 
-    def preprocess_image(self, image: np.ndarray) -> np.ndarray:
+    def preprocess_image(self, image):
         h, w = image.shape[:2]
         new_h = int(h - (h % 32))
         new_w = int(w - (w % 32))
         image = Image.fromarray(image).resize((new_w, new_h), resample=Image.BICUBIC)
         return np.array(image)
 
-    def detect_text(self, image: np.ndarray) -> np.ndarray:
+    def detect_text(self, image):
         image = self.preprocess_image(image)
         blob_params = self.blob_params
         blob_params['size'] = (image.shape[1], image.shape[0])
@@ -85,7 +85,7 @@ class TextDetector:
         boxes = self.postprocess_detections(scores, geometry)
         return boxes
 
-    def get_text_rois(self, image: np.ndarray, scale: float=3, augment: bool=True) -> list:
+    def get_text_rois(self, image, scale=3, augment=True):
         rois = []
         roi_locs = []
         boxes = self.detect_text(image)
