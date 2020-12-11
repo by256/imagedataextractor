@@ -3,7 +3,7 @@ from skimage.color import rgb2gray
 from skimage.measure import label, regionprops
 
 
-def get_images(image, min_edge=0.05, min_fill=0.8, t=0.9):
+def figsplit(image, min_edge=0.05, min_fill=0.8, t=0.9):
     """
     Extracts constituent images from a panel of images typically 
     found in figures in scientific literature. This was adapted 
