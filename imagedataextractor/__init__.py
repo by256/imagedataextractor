@@ -1,1 +1,1 @@
-from .extract import extract, extract_image
+from .extract import *
