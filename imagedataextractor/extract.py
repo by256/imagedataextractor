@@ -33,10 +33,7 @@ def extract(input_paths, out_dir, bayesian=True, device='cpu'):
             extract_image(image, target_dir=target_dir, bayesian=bayesian, device=device)
         else:
             # else documents, therefore use chemdataextractor
-            cde_retrieve_images(path)
-
-def cde_retrieve_images(doc_path):
-    raise NotImplementedError('Extraction from documents will be implemented upon the release of CDE 2.0.')
+            extract_document(path)
 
 def extract_image(image, target_dir, bayesian=True, min_particles=10, device='cpu'):
 
@@ -182,6 +179,15 @@ def extract_image(image, target_dir, bayesian=True, min_particles=10, device='cp
         plt.imsave(os.path.join(target_dir, 'uncertainty.png'), uncertainty, cmap='viridis')
 
     results_df.to_csv(os.path.join(target_dir, 'data.csv'), index=False)
+
+def extract_document(doc_path):
+    raise NotImplementedError('Extraction from documents will be implemented upon the release of CDE 2.0.')
+
+def extract_images(images_dir):
+    raise NotImplementedError()
+
+def extract_documents(docs_dir):
+    raise NotImplementedError('Extraction from documents will be implemented upon the release of CDE 2.0.')
 
 
 #### tests ####
