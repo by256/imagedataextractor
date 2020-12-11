@@ -24,7 +24,7 @@ class TextDetector:
                             'swapRB': True}  # should maybe be false
         self.confidence_threshold = 0.5
 
-    def postprocess_detections(self, scores: np.ndarray, geometry: np.ndarray) -> np.ndarray:
+    def postprocess_detections(self, scores, geometry):
         rows, cols = scores.shape[2:]
         rects = []
         confidences = []
