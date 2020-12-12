@@ -54,16 +54,16 @@ def _figsplit_mkdir_and_extract(image, target_dir, seg_kws):
     if len(images) == 1:
         if not os.path.exists(target_dir):
             os.makedirs(target_dir)
-        extract_image(image, target_dir, seg_kws=seg_kws)
+        _extract_image(image, target_dir, seg_kws=seg_kws)
     elif len(images) > 1:
         for i, image in enumerate(images):
             split_target_dir = os.path.join(target_dir, str(i+1))
             if not os.path.exists(split_target_dir):
                 os.makedirs(split_target_dir)
-            extract_image(image, split_target_dir, seg_kws=seg_kws)
+            _extract_image(image, split_target_dir, seg_kws=seg_kws)
 
 
-def extract_image(image, target_dir, min_particles=10, 
+def _extract_image(image, target_dir, min_particles=10, 
                   seg_kws={'bayesian':True, 'n_samples':30, 'tu':0.0125, 'device':'cpu'}):
     """
     Extract from a single image (not a panel).
