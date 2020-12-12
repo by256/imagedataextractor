@@ -220,15 +220,12 @@ def extract_document(doc_path):
     """Extract from single document."""
     raise NotImplementedError('Extraction from documents will be implemented upon the release of CDE 2.0.')
 
-extract_images = extract
-extract_documents = extract
-
 #### tests ####
 
-import os
-import cv2
-import random
-import matplotlib.pyplot as plt
+# import os
+# import cv2
+# import random
+# import matplotlib.pyplot as plt
 
 # test cde retreive
 
@@ -244,7 +241,7 @@ import matplotlib.pyplot as plt
 # random.shuffle(im_paths)
 # im_paths = im_paths[3:]
 
-seg_kws = {'bayesian':True, 'n_samples':30, 'tu':0.0125, 'device':'cpu'}
+# seg_kws = {'bayesian':True, 'n_samples':30, 'tu':0.0125, 'device':'cpu'}
 
 # # sb_detector = ScalebarDetector()
 # for i, im_path in enumerate(im_paths):
@@ -271,6 +268,6 @@ seg_kws = {'bayesian':True, 'n_samples':30, 'tu':0.0125, 'device':'cpu'}
 # test extract (single images)
 # im_path = '/home/by256/Documents/Projects/ideweb/ideweb/static/img/0_C6CE01551D_fig1_2.png'
 # im_path = '/media/by256/128GBMaster/EM-images/images-c/10.1016.j.jpowsour.2016.10.028.gr1.png' # error!
-im_path = '/media/by256/128GBMaster/EM-images/images-c/10.1016.j.jssc.2017.09.004.gr8.png'
-out_dir = '/home/by256/Documents/Projects/imagedataextractor/test/test_out3/'
-extract(im_path, out_dir, seg_kws=seg_kws)
+# im_path = '/media/by256/128GBMaster/EM-images/images-c/10.1016.j.jssc.2017.09.004.gr8.png'
+# out_dir = '/home/by256/Documents/Projects/imagedataextractor/test/test_out3/'
+# extract(im_path, out_dir, seg_kws=seg_kws)
