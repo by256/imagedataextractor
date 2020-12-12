@@ -19,7 +19,7 @@ from .segment import ParticleSegmenter
 from .utils import get_contours, shuffle_segmap
 
 
-def extract(input_path, out_dir,  seg_kws={'bayesian': True, 'n_samples':30, 'tu':0.0125, 'device':'cpu'}):
+def extract(input_path, out_dir,  seg_kws={'bayesian':True, 'n_samples':30, 'tu':0.0125, 'device':'cpu'}):
     """Extract from single image, single doc, directory of images, or directory of docs."""
     
     allowed_doc_exts = ['.html', '.xml', '.json', '.pdf']
