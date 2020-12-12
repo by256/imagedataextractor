@@ -10,16 +10,16 @@ import matplotlib.pyplot as plt
 from rdfpy import rdf2d
 from chemdataextractor import Document
 
-from .figsplit import figsplit
-from .analysis import ShapeDetector
-from .analysis.filtering import edge_filter
-from .analysis.particlesize import aspect_ratio
-from .scalebar import ScalebarDetector
-from .segment import ParticleSegmenter
-from .utils import get_contours, shuffle_segmap
+from figsplit import figsplit
+from analysis import ShapeDetector
+from analysis.filtering import edge_filter
+from analysis.particlesize import aspect_ratio
+from scalebar import ScalebarDetector
+from segment import ParticleSegmenter
+from utils import get_contours, shuffle_segmap
 
 
-def extract(input_path, out_dir, bayesian=True, device='cpu'):
+def extract(input_path, out_dir,  seg_kws={'bayesian': True, 'n_samples':30, 'tu':0.0125, 'device':'cpu'}):
     """Extract from single image, single doc, directory of images, or directory of docs."""
     
     allowed_doc_exts = ['.html', '.xml', '.json', '.pdf']
@@ -30,7 +30,7 @@ def extract(input_path, out_dir, bayesian=True, device='cpu'):
             fn = input_path.split('/')[-1].split('.'+imghdr.what(input_path))[0]
             target_dir = os.path.join(out_dir, fn)
             image = cv2.imread(input_path)
-            _figsplit_mkdir_and_extract(image, target_dir=target_dir, bayesian=bayesian, device=device)
+            _figsplit_mkdir_and_extract(image, target_dir, seg_kws=seg_kws)
     # single document
     elif os.path.splitext(input_path)[1] in allowed_doc_exts:
         pass
@@ -43,34 +43,35 @@ def extract(input_path, out_dir, bayesian=True, device='cpu'):
                 fn = f.split('/')[-1].split('.'+file_ext)[0]
                 target_dir = os.path.join(out_dir, fn)
                 image = cv2.imread(os.path.join(input_path, f))
-                _figsplit_mkdir_and_extract(image, target_dir=target_dir, bayesian=bayesian, device=device)
+                _figsplit_mkdir_and_extract(image, target_dir, seg_kws=seg_kws)
             # document
             if os.path.splitext(os.listdir(input_path)[0]) in allowed_doc_exts:
                 pass
 
-def _figsplit_mkdir_and_extract(image, target_dir, bayesian, device):
+def _figsplit_mkdir_and_extract(image, target_dir, seg_kws):
     """Private function that combines figsplit, creation of output dir, and extract split images."""    
     images = figsplit(image)
     if len(images) == 1:
         if not os.path.exists(target_dir):
             os.makedirs(target_dir)
-        extract_image(image, target_dir=target_dir, bayesian=bayesian, device=device)
+        extract_image(image, target_dir, seg_kws=seg_kws)
     elif len(images) > 1:
         for i, image in enumerate(images):
-            split_target_dir = os.path.join(target_dir, str(i))
+            split_target_dir = os.path.join(target_dir, str(i+1))
             if not os.path.exists(split_target_dir):
                 os.makedirs(split_target_dir)
-            extract_image(image, target_dir=split_target_dir, bayesian=bayesian, device=device)
+            extract_image(image, split_target_dir, seg_kws=seg_kws)
 
 
-def extract_image(image, target_dir, bayesian=True, min_particles=10, device='cpu'):
+def extract_image(image, target_dir, min_particles=10, 
+                  seg_kws={'bayesian':True, 'n_samples':30, 'tu':0.0125, 'device':'cpu'}):
     """
     Extract from a single image (not a panel).
     """
 
     # initialise detectors
     sb_detector = ScalebarDetector()
-    segmenter = ParticleSegmenter(bayesian=bayesian, device=device)
+    segmenter = ParticleSegmenter(**seg_kws)
     shape_detector = ShapeDetector()
 
     output_image = image.copy()
@@ -151,7 +152,7 @@ def extract_image(image, target_dir, bayesian=True, min_particles=10, device='cp
             diameter = 2*np.sqrt(area/np.pi)
             particle_data['diameter'] = diameter
         # particle instance uncertainty
-        if bayesian:
+        if seg_kws['bayesian']:
             inst_uncertainty = np.mean(uncertainty[inst_mask])
             particle_data['uncertainty'] = inst_uncertainty
 
@@ -160,56 +161,60 @@ def extract_image(image, target_dir, bayesian=True, min_particles=10, device='cp
     # results DataFrame
     results_df = pd.DataFrame(particles)
     
-    # particle size hist
-    valid_particles_df = results_df[results_df['edge'] == False]
-    particle_preds_filtered = edge_filter(particle_preds)
-    N = len(np.unique(particle_preds_filtered)) - 1
-    if N > min_particles:
-        particle_sizes =  np.array(valid_particles_df['area'])
+    if len(results_df) > 0:
+        # particle size hist
+        valid_particles_df = results_df[results_df['edge'] == False]
+        particle_preds_filtered = edge_filter(particle_preds)
+        N = len(np.unique(particle_preds_filtered)) - 1
+        if N > min_particles:
+            particle_sizes =  np.array(valid_particles_df['area'])
 
-        counts, bins = np.histogram(particle_sizes, bins='rice')
-        hist_fig = plt.figure()
-        plt.bar(bins[:-1] + np.diff(bins) / 2, counts, np.diff(bins), color='k', edgecolor='k', alpha=0.6)
-        plt.ylabel('Count')
-        if units is not None:
-            xlabel = 'Particle Size: ({}^2)'.format(units)
-        else:
-            xlabel = 'Particle Size: (Pixels^2)'
-        plt.xlabel(xlabel)
-        plt.savefig(os.path.join(target_dir, 'sizehist.png'), bbox_inches='tight', pad_inches=0.1)
-        plt.close(hist_fig)
+            counts, bins = np.histogram(particle_sizes, bins='rice')
+            hist_fig = plt.figure()
+            plt.bar(bins[:-1] + np.diff(bins) / 2, counts, np.diff(bins), color='k', edgecolor='k', alpha=0.6)
+            plt.ylabel('Count')
+            if units is not None:
+                xlabel = 'Particle Size: ({}^2)'.format(units)
+            else:
+                xlabel = 'Particle Size: (Pixels^2)'
+            plt.xlabel(xlabel)
+            plt.savefig(os.path.join(target_dir, 'sizehist.png'), bbox_inches='tight', pad_inches=0.1)
+            plt.close(hist_fig)
 
-    # rdf
-    if N > min_particles:
-        center_coords = np.array(list(results_df['center']))
-        dr = np.sqrt(np.mean(results_df['area (pixels^2)'])) / 4
-        g_r, radii = rdf2d(center_coords, dr=dr)
+        # rdf
+        if N > min_particles:
+            center_coords = np.array(list(results_df['center']))
+            dr = np.sqrt(np.mean(results_df['area (pixels^2)'])) / 4
+            g_r, radii = rdf2d(center_coords, dr=dr)
+            
+            rdf_fig = plt.figure(figsize=(10, 6))
+            plt.plot(radii, g_r, color='k')
+
+            plt.ylabel('g(r)')
+            plt.xlabel('r (nm)')
+            plt.savefig(os.path.join(target_dir, 'rdf.png'), bbox_inches='tight', pad_inches=0.1)
+            plt.close(rdf_fig)
+            np.savetxt(os.path.join(target_dir, 'rdf.txt'), np.stack([radii, g_r], axis=-1))
         
-        rdf_fig = plt.figure(figsize=(10, 6))
-        plt.plot(radii, g_r, color='k')
+        # create and save outputs
+        cv2.imwrite(os.path.join(target_dir, 'det.png'), output_image)
+        cv2.imwrite(os.path.join(target_dir, 'scalebar.png'), scalebar_image)
 
-        plt.ylabel('g(r)')
-        plt.xlabel('r (nm)')
-        plt.savefig(os.path.join(target_dir, 'rdf.png'), bbox_inches='tight', pad_inches=0.1)
-        plt.close(rdf_fig)
-        np.savetxt(os.path.join(target_dir, 'rdf.txt'), np.stack([radii, g_r], axis=-1))
-    
-    # create and save outputs
-    cv2.imwrite(os.path.join(target_dir, 'det.png'), output_image)
-    cv2.imwrite(os.path.join(target_dir, 'scalebar.png'), scalebar_image)
+        seg_cmap = copy.copy(matplotlib.cm.tab20)
+        seg_cmap.set_bad(color='k')
+        original[original == 0.0] = np.nan
+        plt.imsave(os.path.join(target_dir, 'pre.png'), original, cmap=seg_cmap)
+        particle_preds[particle_preds == 0.0] = np.nan
+        plt.imsave(os.path.join(target_dir, 'seg.png'), particle_preds, cmap=seg_cmap)
+        particle_preds_filtered[particle_preds_filtered == 0.0] = np.nan
+        plt.imsave(os.path.join(target_dir, 'seg_edgefiltered.png'), particle_preds_filtered, cmap=seg_cmap)
+        if seg_kws['bayesian']:
+            plt.imsave(os.path.join(target_dir, 'uncertainty.png'), uncertainty, cmap='viridis')
 
-    seg_cmap = copy.copy(matplotlib.cm.tab20)
-    seg_cmap.set_bad(color='k')
-    original[original == 0.0] = np.nan
-    plt.imsave(os.path.join(target_dir, 'pre.png'), original, cmap=seg_cmap)
-    particle_preds[particle_preds == 0.0] = np.nan
-    plt.imsave(os.path.join(target_dir, 'seg.png'), particle_preds, cmap=seg_cmap)
-    particle_preds_filtered[particle_preds_filtered == 0.0] = np.nan
-    plt.imsave(os.path.join(target_dir, 'seg_edgefiltered.png'), particle_preds_filtered, cmap=seg_cmap)
-    if bayesian:
-        plt.imsave(os.path.join(target_dir, 'uncertainty.png'), uncertainty, cmap='viridis')
-
-    results_df.to_csv(os.path.join(target_dir, 'data.csv'), index=False)
+        results_df.to_csv(os.path.join(target_dir, 'data.csv'), index=False)
+    else:
+        with open('{}/{}.txt'.format(target_dir, 'result'), 'w+') as f:
+            f.write('No particles found.')
 
 def extract_document(doc_path):
     """Extract from single document."""
@@ -220,10 +225,10 @@ extract_documents = extract
 
 #### tests ####
 
-# import os
-# import cv2
-# import random
-# import matplotlib.pyplot as plt
+import os
+import cv2
+import random
+import matplotlib.pyplot as plt
 
 # test cde retreive
 
@@ -235,17 +240,19 @@ extract_documents = extract
 
 # base_path = '/home/by256/Documents/Projects/particle-seg-dataset/elsevier/processed-images/'
 # im_paths = os.listdir(base_path)[10:]
-# out_dir = '/home/by256/Documents/Projects/imagedataextractor/test/test_out'
+# out_dir = '/home/by256/Documents/Projects/imagedataextractor/test/test_out3'
 # random.shuffle(im_paths)
-# im_paths = im_paths[10:]
+# im_paths = im_paths[3:]
+
+seg_kws = {'bayesian':True, 'n_samples':30, 'tu':0.0125, 'device':'cpu'}
 
 # # sb_detector = ScalebarDetector()
 # for i, im_path in enumerate(im_paths):
 #     print(im_path)
 #     # try:
 #     sb_detector = ScalebarDetector()
-#     image = cv2.imread(base_path + im_path)
-#     extract_image(image, out_dir, bayesian=False)
+    # image = cv2.imread(base_path + im_path)
+    # extract_image(image, out_dir, seg_kws=seg_kws)
 #     # except Exception as e:
 #     #     print(e)
 
@@ -263,5 +270,7 @@ extract_documents = extract
 
 # test extract (single images)
 # im_path = '/home/by256/Documents/Projects/ideweb/ideweb/static/img/0_C6CE01551D_fig1_2.png'
-# out_dir = '/home/by256/Documents/Projects/imagedataextractor/test/test_out3/'
-# extract(im_path, out_dir, bayesian=True, device='cpu')
+# im_path = '/media/by256/128GBMaster/EM-images/images-c/10.1016.j.jpowsour.2016.10.028.gr1.png' # error!
+im_path = '/media/by256/128GBMaster/EM-images/images-c/10.1016.j.jssc.2017.09.004.gr8.png'
+out_dir = '/home/by256/Documents/Projects/imagedataextractor/test/test_out3/'
+extract(im_path, out_dir, seg_kws=seg_kws)
