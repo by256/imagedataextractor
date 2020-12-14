@@ -20,7 +20,7 @@ We strongly recommend the use of a [virtual environment](https://packaging.pytho
 
 #### Install Tesseract
 
-**imagedataextractor** requires [Tesseract 4](https://tesseract-ocr.github.io/tessdoc/Installation.html). Installation instruction for Tesseract can be found [here](https://tesseract-ocr.github.io/tessdoc/Installation.html). On Linux, this is very simple and can be installed using
+**imagedataextractor** requires [Tesseract 4](https://tesseract-ocr.github.io/tessdoc/Installation.html). Installation instructions for Tesseract can be found [here](https://tesseract-ocr.github.io/tessdoc/Installation.html). On Linux, this is very simple:
 
 ```bash
 sudo apt-get install tesseract-ocr libtesseract-dev
