@@ -2,6 +2,8 @@
 
 **imagedataextractor** is a Python library for electron microscopy image quantification.
 
+Try the online [Demo](http://imagedataextractor.org/demo).
+
 ## Features
 
 - Automatic detection and download of microscopy images from scientific articles.
@@ -32,6 +34,7 @@ ide.extract(input_path, output_dir)
 
 If the input image is a figure containing a panel of images, these will be split and extraction will be performed on each sub-image separately.
 
+A more detailed usage guide can be found in the [Documentation](http://imagedataextractor.org/docs/usage).
 
 ## Citing
 
