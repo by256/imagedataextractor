@@ -1,3 +1,4 @@
+import os
 import cv2
 import numpy as np
 
@@ -5,39 +6,116 @@ import numpy as np
 class ShapeDetector:
 
     def __init__(self):
-        pass
+        self.shape_names = ['circle', 
+                            'diamond', 
+                            'ellipse', 
+                            'hexagon', 
+                            'rectangle', 
+                            'rod', 
+                            'square', 
+                            'triangle']
+        self.shapes_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'shapes/')
+        self.shapes_dict = None  # key - name, value - image
+        self.populate_shape_dict()
 
-    def detect_circle(self, mask):
+    def match_shapes(self, mask):
 
-        circle = False
+        mask_contour = self.get_contours(mask)[0] # index 0, since there is only 1 cntr
 
-        contours = self.get_contours(mask)
-        if len(contours) >= 5:
-            ellipse = cv2.fitEllipse(contours)
-            w, h = ellipse[1]
-            aspect_ratio = w/h
+        distances = []
+        for shape_name in self.shape_names:
+            shape_image = self.shapes_dict[shape_name]
+            shape_contour = self.get_contours(shape_image)[0]
+            d = cv2.matchShapes(mask_contour, shape_contour, method=1, parameter=0.0)
+            distances.append(d)
+            
+        closest_match = self.shape_names[np.argmin(distances)]
+        print('matches', dict(zip(self.shape_names, distances)))
+        print('closest_match', closest_match, '\n')
+        return closest_match, distances
 
-            ellipse_image = np.zeros_like(mask.copy(), dtype=np.uint8)
-            ellipse_image = cv2.ellipse(ellipse_image, ellipse, color=(255,255,255), thickness=-1)
-            ellipse_image = (ellipse_image > 0).astype(np.uint8)
+    # def match_shapes(self, mask):
 
-            intersection = np.sum(np.logical_and(mask, ellipse_image))
-            union = np.sum(np.logical_or(mask, ellipse_image))
-            iou = intersection / union
+    #     # mask_contour = self.get_contours(mask)[0] # index 0, since there is only 1 cntr
+    #     mask_hu_moments = self.compute_log_hu_moments(mask)
 
-            if aspect_ratio > 0.85 and iou > 0.95:
-                circle = True
+    #     distances = []
+    #     for shape_name in self.shape_names:
+    #         shape_image = self.shapes_dict[shape_name]
+    #         # shape_contour = self.get_contours(shape_image)[0]
+    #         shape_hu_moments = self.compute_log_hu_moments(shape_image)
+    #         d = np.linalg.norm(mask_hu_moments-shape_hu_moments)
+    #         distances.append(d)
         
-        return circle
+    #     closest_match = self.shape_names[np.argmin(distances)]
+    #     print('matches', dict(zip(self.shape_names, distances)))
+    #     print('closest_match', closest_match, '\n')
+    #     return closest_match, distances
+    
+
+    # def compute_log_hu_moments(self, x, eps=1e-12):
+    #     moments = cv2.moments(x)
+    #     hu_moments = cv2.HuMoments(moments) + 10
+    #     for i in range(len(hu_moments)):
+    #         hu_moments[i] =  -1.0 * np.copysign(1.0, hu_moments[i]) * np.log10(np.abs(hu_moments[i]))
+
+    #     return hu_moments
 
     def get_contours(self, x):
         contours = cv2.findContours(x.copy(), cv2.RETR_EXTERNAL,
                                     cv2.CHAIN_APPROX_SIMPLE)
         if len(contours) == 2:
-            contours = contours[0][0]
+            contours = contours[0]
         elif len(contours) == 3:
-            contours = contours[1][0]
+            contours = contours[1]
         return contours
+
+    def populate_shape_dict(self):
+        shape_images = []
+        for shape_name in self.shape_names:
+            shape_image = cv2.imread(os.path.join(self.shapes_dir, '{}.png'.format(shape_name)))
+            shape_image = cv2.cvtColor(shape_image, cv2.COLOR_BGR2GRAY)
+            shape_images.append(shape_image)
+        self.shapes_dict = dict(zip(self.shape_names, shape_images))
+
+
+
+# class ShapeDetector:
+
+#     def __init__(self):
+#         pass
+
+#     def detect_circle(self, mask):
+
+#         circle = False
+
+#         contours = self.get_contours(mask)
+#         if len(contours) >= 5:
+#             ellipse = cv2.fitEllipse(contours)
+#             w, h = ellipse[1]
+#             aspect_ratio = w/h
+
+#             ellipse_image = np.zeros_like(mask.copy(), dtype=np.uint8)
+#             ellipse_image = cv2.ellipse(ellipse_image, ellipse, color=(255,255,255), thickness=-1)
+#             ellipse_image = (ellipse_image > 0).astype(np.uint8)
+
+#             intersection = np.sum(np.logical_and(mask, ellipse_image))
+#             union = np.sum(np.logical_or(mask, ellipse_image))
+#             iou = intersection / union
+
+#             if aspect_ratio > 0.85 and iou > 0.95:
+#                 circle = True
+        
+#         return circle
+
+    # def get_contours(self, x):
+    #     contours = cv2.findContours(x.copy(), cv2.RETR_EXTERNAL,
+    #                                 cv2.CHAIN_APPROX_SIMPLE)
+    #     if len(contours) == 2:
+    #         contours = contours[0][0]
+    #     elif len(contours) == 3:
+    #         contours = contours[1][0]
+    #     return contours
 
     # def logscale_moments(self, moments):
     #     return -1*np.copysign(1.0, moments)*np.log10(np.abs(moments))
