@@ -145,9 +145,9 @@ def _extract_image(image, target_dir, min_particles=10,
         ar = aspect_ratio(contours[0])
         particle_data['aspect_ratio'] = ar
         # shape estimate
-        circle = shape_detector.detect_circle(inst_mask)
-        if circle:
-            particle_data['shape_estimate'] = 'circle'
+        shape_estimate, shape_distances = shape_detector.match_shapes(inst_mask)
+        particle_data['shape_estimate'] = shape_estimate
+        if shape_estimate == 'circle':
             # diameter
             diameter = 2*np.sqrt(area/np.pi)
             particle_data['diameter'] = diameter
@@ -262,8 +262,8 @@ def extract_document(doc_path):
 # im_paths = [os.path.join(base_path, x) for x in im_paths]
 # random.shuffle(im_paths)
 
-# out_dir = '/home/by256/Documents/Projects/imagedataextractor/test/test_out3/'
-# extract(base_path, out_dir, bayesian=True, device='cpu')
+# out_dir = '/home/by256/Documents/Projects/imagedataextractor/test/test_out4/'
+# extract(base_path, out_dir)
 
 # test extract (single images)
 # im_path = '/home/by256/Documents/Projects/ideweb/ideweb/static/img/0_C6CE01551D_fig1_2.png'
