@@ -16,8 +16,35 @@ Try the online [Demo](https://imagedataextractor.org/demo).
 
 ## Installation
 
+We strongly recommend the use of a [virtual environment](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/) for installation, as **imagedataextractor** requires specific versions of its requirements to be installed in order to function as intended.
+
+#### Install Tesseract
+
+**imagedataextractor** requires [Tesseract 4](https://tesseract-ocr.github.io/tessdoc/Installation.html). Installation instruction for Tesseract can be found [here](https://tesseract-ocr.github.io/tessdoc/Installation.html). On Linux, this is very simple and can be installed using
+
+```bash
+sudo apt-get install tesseract-ocr libtesseract-dev
+```
+
+#### Installation with `pip` (recommended)
+
 ```bash
 pip install imagedataextractor
+```
+
+#### Installation from source
+
+1. Clone the repo:
+
+
+```bash
+git clone https://github.com/by256/imagedataextractor.git
+```
+
+2. Install requirements:
+
+```bash
+pip install -r requirements.txt
 ```
 
 ## Usage
