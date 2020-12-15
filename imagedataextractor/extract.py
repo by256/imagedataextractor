@@ -10,13 +10,13 @@ import matplotlib.pyplot as plt
 from rdfpy import rdf2d
 from chemdataextractor import Document
 
-from .figsplit import figsplit
-from .analysis import ShapeDetector
-from .analysis.filtering import edge_filter
-from .analysis.particlesize import aspect_ratio
-from .scalebar import ScalebarDetector
-from .segment import ParticleSegmenter
-from .utils import get_contours, shuffle_segmap
+from figsplit import figsplit
+from analysis import ShapeDetector
+from analysis.filtering import edge_filter
+from analysis.particlesize import aspect_ratio
+from scalebar import ScalebarDetector
+from segment import ParticleSegmenter
+from utils import get_contours, shuffle_segmap
 
 
 def extract(input_path, out_dir,  seg_kws={'bayesian':True, 'n_samples':30, 'tu':0.0125, 'device':'cpu'}):
@@ -27,7 +27,8 @@ def extract(input_path, out_dir,  seg_kws={'bayesian':True, 'n_samples':30, 'tu'
     # single image
     if os.path.isfile(input_path):
         if imghdr.what(input_path) is not None:
-            fn = input_path.split('/')[-1].split('.'+imghdr.what(input_path))[0]
+            file_ext = os.path.splitext(input_path)[-1]
+            fn = input_path.split('/')[-1].split(file_ext)[0]
             target_dir = os.path.join(out_dir, fn)
             image = cv2.imread(input_path)
             _figsplit_mkdir_and_extract(image, target_dir, seg_kws=seg_kws)
@@ -37,16 +38,17 @@ def extract(input_path, out_dir,  seg_kws={'bayesian':True, 'n_samples':30, 'tu'
     # directory of images or documents
     elif os.path.isdir(input_path):
         for f in os.listdir(input_path):
+            file_path = os.path.join(input_path, f)
+            file_ext = os.path.splitext(file_path)[-1]
             # image
-            file_ext = imghdr.what(os.path.join(input_path, f))
-            if file_ext is not None:
-                fn = f.split('/')[-1].split('.'+file_ext)[0]
+            if imghdr.what(file_path) is not None:
+                fn = f.split('/')[-1].split(file_ext)[0]
                 target_dir = os.path.join(out_dir, fn)
-                image = cv2.imread(os.path.join(input_path, f))
+                image = cv2.imread(file_path)
                 _figsplit_mkdir_and_extract(image, target_dir, seg_kws=seg_kws)
             # document
-            if os.path.splitext(os.listdir(input_path)[0]) in allowed_doc_exts:
-                pass
+            if file_ext in allowed_doc_exts:
+                extract_document()
 
 def _figsplit_mkdir_and_extract(image, target_dir, seg_kws):
     """Private function that combines figsplit, creation of output dir, and extract split images."""    
@@ -216,16 +218,16 @@ def _extract_image(image, target_dir, min_particles=10,
         with open('{}/{}.txt'.format(target_dir, 'result'), 'w+') as f:
             f.write('No particles found.')
 
-def extract_document(doc_path):
+def extract_document():
     """Extract from single document."""
-    raise NotImplementedError('Extraction from documents will be implemented upon the release of CDE 2.0.')
+    raise NotImplementedError('Extraction from documents will be implemented upon the release of CDE 2.0. Please use image extraction instead.')
 
 #### tests ####
 
-# import os
-# import cv2
-# import random
-# import matplotlib.pyplot as plt
+import os
+import cv2
+import random
+import matplotlib.pyplot as plt
 
 # test cde retreive
 
@@ -257,13 +259,13 @@ def extract_document(doc_path):
 
 # test extract (dir of images)
 
-# base_path = '/home/by256/Documents/Projects/particle-seg-dataset/elsevier/processed-images/'
-# im_paths = os.listdir(base_path)[:3]
-# im_paths = [os.path.join(base_path, x) for x in im_paths]
-# random.shuffle(im_paths)
+base_path = '/home/by256/Documents/Projects/particle-seg-dataset/elsevier/processed-images/'
+im_paths = os.listdir(base_path)[:3]
+im_paths = [os.path.join(base_path, x) for x in im_paths]
+random.shuffle(im_paths)
 
-# out_dir = '/home/by256/Documents/Projects/imagedataextractor/test/test_out4/'
-# extract(base_path, out_dir)
+out_dir = '/home/by256/Documents/Projects/imagedataextractor/test/test_out4/'
+extract(base_path, out_dir)
 
 # test extract (single images)
 # im_path = '/home/by256/Documents/Projects/ideweb/ideweb/static/img/0_C6CE01551D_fig1_2.png'
