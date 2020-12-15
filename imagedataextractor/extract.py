@@ -10,13 +10,13 @@ import matplotlib.pyplot as plt
 from rdfpy import rdf2d
 from chemdataextractor import Document
 
-from figsplit import figsplit
-from analysis import ShapeDetector
-from analysis.filtering import edge_filter
-from analysis.particlesize import aspect_ratio
-from scalebar import ScalebarDetector
-from segment import ParticleSegmenter
-from utils import get_contours, shuffle_segmap
+from .figsplit import figsplit
+from .analysis import ShapeDetector
+from .analysis.filtering import edge_filter
+from .analysis.particlesize import aspect_ratio
+from .scalebar import ScalebarDetector
+from .segment import ParticleSegmenter
+from .utils import get_contours, shuffle_segmap
 
 
 def extract(input_path, out_dir,  seg_kws={'bayesian':True, 'n_samples':30, 'tu':0.0125, 'device':'cpu'}):
