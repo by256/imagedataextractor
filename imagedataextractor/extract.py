@@ -224,10 +224,10 @@ def extract_document():
 
 #### tests ####
 
-import os
-import cv2
-import random
-import matplotlib.pyplot as plt
+# import os
+# import cv2
+# import random
+# import matplotlib.pyplot as plt
 
 # test cde retreive
 
@@ -259,13 +259,13 @@ import matplotlib.pyplot as plt
 
 # test extract (dir of images)
 
-base_path = '/home/by256/Documents/Projects/particle-seg-dataset/elsevier/processed-images/'
-im_paths = os.listdir(base_path)[:3]
-im_paths = [os.path.join(base_path, x) for x in im_paths]
-random.shuffle(im_paths)
+# base_path = '/home/by256/Documents/Projects/particle-seg-dataset/elsevier/processed-images/'
+# im_paths = os.listdir(base_path)[:3]
+# im_paths = [os.path.join(base_path, x) for x in im_paths]
+# random.shuffle(im_paths)
 
-out_dir = '/home/by256/Documents/Projects/imagedataextractor/test/test_out4/'
-extract(base_path, out_dir)
+# out_dir = '/home/by256/Documents/Projects/imagedataextractor/test/test_out4/'
+# extract(base_path, out_dir)
 
 # test extract (single images)
 # im_path = '/home/by256/Documents/Projects/ideweb/ideweb/static/img/0_C6CE01551D_fig1_2.png'
