@@ -16,7 +16,7 @@ Try the online [Demo](https://imagedataextractor.org/demo).
 
 ## Installation
 
-We strongly recommend the use of a [virtual environment](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/) for installation, as **imagedataextractor** requires specific versions of its requirements to be installed in order to function as intended.
+**imagedataextractor** requires Python 3.7 or above. We strongly recommend the use of a [virtual environment](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/) for installation, as **imagedataextractor** requires specific versions of its requirements to be installed in order to function as intended.
 
 #### Install Tesseract
 
@@ -34,17 +34,20 @@ pip install imagedataextractor
 
 #### Installation from source
 
-1. Clone the repo:
+1. Clone the repo and move into the directory:
 
 
 ```bash
 git clone https://github.com/by256/imagedataextractor.git
+cd imagedataextractor
 ```
 
-2. Install requirements:
+2. Activate your virtual environment.
+
+3. Install:
 
 ```bash
-pip install -r requirements.txt
+python setup.py install
 ```
 
 ## Usage
