@@ -71,6 +71,9 @@ def _extract_image(image, target_dir, min_particles=10,
     Extract from a single image (not a panel).
     """
 
+    default_seg_kws = {'bayesian':True, 'n_samples':30, 'tu':0.0125, 'device':'cpu'}
+    seg_kws = {**default_seg_kws, **seg_kws}
+
     # initialise detectors
     sb_detector = ScalebarDetector()
     segmenter = ParticleSegmenter(**seg_kws)
