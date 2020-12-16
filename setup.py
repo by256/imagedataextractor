@@ -19,7 +19,10 @@ setuptools.setup(
                       'opencv-python==4.2.0.32', 
                       'pytesseract==0.3.3', 
                       'torch==1.6.0', 
-                      'rdfpy>=0.1.5'],
+                      'rdfpy>=0.1.5', 
+                      'pandas', 
+                      'chemdataextractor', 
+                      'scikit-image'],
     license='MIT',
     classifiers=[
         'Programming Language :: Python :: 3',
