@@ -75,6 +75,10 @@ B. Yildirim, J. M. Cole, "Bayesian Particle Instance Segmentation for Electron M
 
 K. T. Mukaddem, E. J. Beard, B. Yildirim, J. M. Cole, "ImageDataExtractor: A Tool to Extract and Quantify Data from Microscopy Images", *J. Chem. Inf. Model.* (2019) https://doi.org/10.1021/acs.jcim.9b00734
 
+## Funding
+
+This project was financially supported by the [Science and Technology Facilities Council (STFC)](https://stfc.ukri.org/) and the [Royal Academy of Engineering](https://www.raeng.org.uk/) (RCSRF1819\7\10).
+
 ## License
 
 [![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](http://badges.mit-license.org)
