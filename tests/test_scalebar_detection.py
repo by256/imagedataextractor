@@ -22,4 +22,4 @@ class TestScalebarDetection(unittest.TestCase):
 
         self.assertEqual(text, expected_text)
         self.assertEqual(units, expected_units)
-        self.assertAlmostEqual(conversion, expected_conversion, places=11)
+        self.assertAlmostEqual(conversion, expected_conversion, places=10)
