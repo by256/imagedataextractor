@@ -2,6 +2,7 @@ import os
 import cv2
 import copy
 import imghdr
+import logging
 import numpy as np
 import pandas as pd
 import matplotlib
@@ -18,6 +19,8 @@ from .scalebar import ScalebarDetector
 from .segment import ParticleSegmenter
 from .utils import get_contours, shuffle_segmap
 
+log = logging.getLogger(__name__)
+
 
 def extract(input_path, out_dir,  seg_kws={'bayesian':True, 'n_samples':30, 'tu':0.0125, 'device':'cpu'}):
     """Extract from single image, single doc, directory of images, or directory of docs."""
@@ -27,6 +30,7 @@ def extract(input_path, out_dir,  seg_kws={'bayesian':True, 'n_samples':30, 'tu'
     # single image
     if os.path.isfile(input_path):
         if imghdr.what(input_path) is not None:
+            log.info('Input is an image of type {}.'.format(imghdr.what(input_path)))
             file_ext = os.path.splitext(input_path)[-1]
             fn = input_path.split('/')[-1].split(file_ext)[0]
             target_dir = os.path.join(out_dir, fn)
@@ -34,9 +38,11 @@ def extract(input_path, out_dir,  seg_kws={'bayesian':True, 'n_samples':30, 'tu'
             _figsplit_mkdir_and_extract(image, target_dir, seg_kws=seg_kws)
     # single document
     elif os.path.splitext(input_path)[1] in allowed_doc_exts:
+        log.info('Input is a document.')
         pass
     # directory of images or documents
     elif os.path.isdir(input_path):
+        log.info('Input is a directory of images/documents.')
         for f in os.listdir(input_path):
             file_path = os.path.join(input_path, f)
             file_ext = os.path.splitext(file_path)[-1]
@@ -47,8 +53,14 @@ def extract(input_path, out_dir,  seg_kws={'bayesian':True, 'n_samples':30, 'tu'
                 image = cv2.imread(file_path)
                 _figsplit_mkdir_and_extract(image, target_dir, seg_kws=seg_kws)
             # document
-            if file_ext in allowed_doc_exts:
+            elif file_ext in allowed_doc_exts:
                 extract_document()
+            # other
+            else:
+                pass
+    else:
+        error_msg = 'Input is invalid. Provide a path to an image, a path to a document of type {}, or a path to a directory of images and/or documents.'.format(allowed_doc_exts[:2])
+        raise TypeError(error_msg)
 
 def _figsplit_mkdir_and_extract(image, target_dir, seg_kws):
     """Private function that combines figsplit, creation of output dir, and extract split images."""    
@@ -99,6 +111,7 @@ def _extract_image(image, target_dir, min_particles=10,
     particle_preds = shuffle_segmap(particle_preds)  # for vis purposes
     particle_preds = particle_preds.astype(float)
     original = original.astype(float)
+    log.info('Particle segmentation successful.')
 
     particles = []
     
@@ -165,6 +178,8 @@ def _extract_image(image, target_dir, min_particles=10,
 
     # results DataFrame
     results_df = pd.DataFrame(particles)
+    if len(results_df) > 0:
+        log.info('Particle quantification successful. Found {} particles.'.format(len(results_df)))
     
     if len(results_df) > 0:
         # particle size hist
@@ -172,6 +187,7 @@ def _extract_image(image, target_dir, min_particles=10,
         particle_preds_filtered = edge_filter(particle_preds)
         N = len(np.unique(particle_preds_filtered)) - 1
         if N > min_particles:
+            log.info('N valid particles > {}. Computing particle size histogram.'.format(min_particles))
             particle_sizes =  np.array(valid_particles_df['area'])
 
             counts, bins = np.histogram(particle_sizes, bins='rice')
@@ -188,6 +204,7 @@ def _extract_image(image, target_dir, min_particles=10,
 
         # rdf
         if N > min_particles:
+            log.info('N valid particles > {}. Computing radial distribution function.'.format(min_particles))
             center_coords = np.array(list(results_df['center']))
             dr = np.sqrt(np.mean(results_df['area (pixels^2)'])) / 4
             g_r, radii = rdf2d(center_coords, dr=dr)
@@ -219,6 +236,7 @@ def _extract_image(image, target_dir, min_particles=10,
         results_df.to_csv(os.path.join(target_dir, 'data.csv'), index=False)
     else:
         with open('{}/{}.txt'.format(target_dir, 'result'), 'w+') as f:
+            log.info('Extraction failed as no particles were found.')
             f.write('No particles found.')
 
 def extract_document():
