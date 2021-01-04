@@ -1,4 +1,5 @@
 import os
+import warnings
 import numpy as np
 import pandas as pd
 from rdfpy import rdf2d
@@ -26,7 +27,7 @@ class EMData:
         self.rdf = {'g_r': None, 'radii': None}
 
     def __repr__(self):
-        pass
+        return 'EMData({} particles.)'.format(len(self.data['idx']))
 
     def __len__(self):
         return len(self.data['idx'])
@@ -40,16 +41,32 @@ class EMData:
             path = os.path.join(path, '.csv')
         self.to_pandas().to_csv(path, index=False)
 
+    @property
+    def valid_sizes(self):
+        valid_idx = np.bitwise_not(self.data['edge'])
+        return np.array(self.data['area'])[valid_idx]
+
     def compute_sizehist(self, bins=None):
-        pass
+        if self.__len__() < 15:
+            warnings.warn('Less than 15 particles were extracted. Resulting histogram is likely to be incorrect.')
+
+        if not bins:
+            bins = 'rice'
+        counts, bin_edges = np.histogram(self.valid_sizes, bins=bins)
+        return counts, bin_edges
+
+    @property
+    def valid_coords(self):
+        valid_idx = np.bitwise_not(self.data['edge'])
+        return np.array(self.data['center'])[valid_idx]
 
     def compute_rdf(self, dr=None):
+        if self.__len__() < 40:
+            warnings.warn('Less than 40 particles were extracted. Resulting RDF is likely to be incorrect.')
         if not dr:
             dr = np.sqrt(np.mean(self.data['area (pixels^2)'])) / 4
-        
         # compute rdf
-        centers = np.array(list(self.data['center']))
-        g_r, radii = rdf2d(centers, dr)
+        g_r, radii = rdf2d(self.valid_coords, dr)
         self.rdf['g_r'] = g_r
         self.rdf['radii'] = radii
         
