@@ -7,7 +7,6 @@ import logging
 import numpy as np
 import pandas as pd
 import matplotlib
-# matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from rdfpy import rdf2d
 from chemdataextractor import Document
@@ -23,6 +22,52 @@ from .utils import get_contours, shuffle_segmap
 
 log = logging.getLogger(__name__)
 
+
+def extract(input_path, seg_bayesian=True, seg_n_samples=30, seg_tu=0.0125, seg_device='cpu'):
+    """Extract from single image, single doc, directory of images, or directory of docs."""
+    allowed_doc_exts = ['.html', '.xml', '.pdf']
+    # single image
+    if os.path.isfile(input_path):
+        if imghdr.what(input_path) is not None:
+            log.info('Input is an image of type {}.'.format(imghdr.what(input_path)))
+            image = cv2.imread(input_path)
+            images = figsplit(image)
+            data = [_extract_image(im, seg_bayesian, seg_n_samples, seg_tu, seg_device) for im in images]
+    # single document
+    elif os.path.splitext(input_path)[1] in allowed_doc_exts:
+        log.info('Input is a document.')
+        extract_document()
+    # directory of images or documents
+    elif os.path.isdir(input_path):
+        log.info('Input is a directory of images/documents.')
+        data = []
+        for f in os.listdir(input_path):
+            file_path = os.path.join(input_path, f)
+            file_ext = os.path.splitext(file_path)[-1]
+            # image
+            if imghdr.what(file_path) is not None:
+                image = cv2.imread(file_path)
+                images = figsplit(image)
+                data.append([_extract_image(im, seg_bayesian, seg_n_samples, seg_tu, seg_device) for im in images])
+            # document
+            elif file_ext in allowed_doc_exts:
+                extract_document()
+        data = [item for sublist in data for item in sublist]  # flatten
+    else:
+        error_msg = 'Input is invalid. Provide a path to an image, a path to a document of type {}, or a path to a directory of images and/or documents.'.format(allowed_doc_exts[:2])
+        raise TypeError(error_msg)
+    return data
+
+
+# def _figsplit_extract(image, seg_bayesian=True, seg_n_samples=30, seg_tu=0.0125, seg_device='cpu'):
+#     """Private function that combines figsplit and extract split images."""    
+#     images = figsplit(image)
+#     # if len(images) == 1:
+#     #     data = _extract_image(images[0], seg_bayesian, seg_n_samples, seg_tu, seg_device)
+#     # elif len(images) > 1:
+#     #     data = [_extract_image(im, seg_bayesian, seg_n_samples, seg_tu, seg_device) for im in images]
+#     return [_extract_image(im, seg_bayesian, seg_n_samples, seg_tu, seg_device) for im in images]
+            
 
 # def extract(input_path, out_dir,  seg_kws={'bayesian':True, 'n_samples':30, 'tu':0.0125, 'device':'cpu'}):
 #     """Extract from single image, single doc, directory of images, or directory of docs."""
@@ -168,9 +213,9 @@ def _extract_image(image, seg_bayesian=True, seg_n_samples=30, seg_tu=0.0125, se
             em_data.data['uncertainty'].append(inst_uncertainty)
         
     if len(em_data) > 0:
-        log.info('Extraction successful. Found {} particles.'.format(len(em_data)))
+        log.info('Extraction successful - Found {} particles.'.format(len(em_data)))
     else:
-        log.info('Extraction failed as no particles were found.')
+        log.info('Extraction failed - no particles were found.')
 
     return em_data
 
@@ -337,9 +382,9 @@ def _extract_image(image, seg_bayesian=True, seg_n_samples=30, seg_tu=0.0125, se
 #             log.info('Extraction failed as no particles were found.')
 #             f.write('No particles found.')
 
-# def extract_document():
-#     """Extract from single document."""
-#     raise NotImplementedError('Extraction from documents will be implemented upon the release of CDE 2.0. Please use image extraction instead.')
+def extract_document():
+    """Extract from single document."""
+    raise NotImplementedError('Extraction from documents will be implemented upon the release of CDE 2.0. Please use image extraction instead.')
 
 #### tests ####
 
