@@ -20,6 +20,10 @@ class Scalebar:
         else:
             repr_ = 'Scalebar: Not detected.'
 
+    @property
+    def data(self):
+        return self.text, self.units, self.conversion, self.contour
+
 
 class ScalebarDetector:
 
