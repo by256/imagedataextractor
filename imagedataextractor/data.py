@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import pandas as pd
 from rdfpy import rdf2d
@@ -31,10 +32,13 @@ class EMData:
         return len(self.data['idx'])
 
     def to_pandas(self):
-        pass
+        return pd.DataFrame(self.data)
 
-    def save(self, path):
-        pass
+    def to_csv(self, path):
+        if not path.endswith('.csv'):
+            path = os.path.splitext(path)[0]
+            path = os.path.join(path, '.csv')
+        self.to_pandas().to_csv(path, index=False)
 
     def compute_sizehist(self, bins=None):
         pass
@@ -50,7 +54,3 @@ class EMData:
         self.rdf['radii'] = radii
         
         return g_r, radii
-
-    @property
-    def rdf(self):
-        return self.rdf['g_r'], self.rdf['radii']
