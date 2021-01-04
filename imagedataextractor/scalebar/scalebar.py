@@ -6,6 +6,21 @@ from .textdetection import TextDetector
 from .utils import get_contours
 
 
+class Scalebar:
+
+    def __init__(self, text=None, units=None, conversion=None, contour=None):
+        self.text = text
+        self.units = units
+        self.conversion = conversion
+        self.contour = contour
+
+    def __repr__(self):
+        if self.text is not None:
+            repr_ =  'Scalebar: {} {}    {} {} per pixel.'.format(self.text, self.units, self.conversion, self.units)
+        else:
+            repr_ = 'Scalebar: Not detected.'
+
+
 class ScalebarDetector:
 
     def __init__(self):
@@ -62,6 +77,10 @@ class ScalebarDetector:
         return value, unit
 
     def detect(self, image):
+        
+        # initialise scalebar
+        scalebar = Scalebar()
+
         rois, roi_locs = self.text_detector.get_text_rois(image)
         text, best_idx = self.ocr.get_text_from_rois(rois)
 
@@ -78,7 +97,10 @@ class ScalebarDetector:
             # convert pixels to meters
             conversion = value / scalebar_width
             conversion = conversion * self.conversion_dict[units]
+        
+        scalebar.text = text
+        scalebar.units = units
+        scalebar.conversion = conversion
+        scalebar.scalebar_contour = scalebar_contour
 
-        return text, units, conversion, scalebar_contour
-
-    
+        return scalebar
