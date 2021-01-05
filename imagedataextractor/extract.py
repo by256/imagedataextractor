@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Main extraction modules for imagedataextractor.
+
+.. codeauthor:: Batuhan Yildirim <by256@cam.ac.uk>
+"""
+
 import os
 import cv2
 import torch

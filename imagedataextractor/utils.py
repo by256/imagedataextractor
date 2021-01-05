@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+General utils.
+
+.. codeauthor:: Batuhan Yildirim <by256@cam.ac.uk>
+"""
+
 import cv2
 import numpy as np
 

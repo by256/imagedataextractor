@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Electron microscopy data class.
+
+.. codeauthor:: Batuhan Yildirim <by256@cam.ac.uk>
+"""
+
 import os
 import warnings
 import numpy as np
