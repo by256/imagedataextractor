@@ -1,14 +1,8 @@
 """
-## Class to cluster embeddings produced by BPartIS and obtain instance segmentation maps.
-## (much of this code was adapted from https://github.com/davyneven/SpatialEmbeddings credit to Davy Neven).
---------------------------------------------------
-## Author: Batuhan Yildirim
-## Email: by256@cam.ac.uk
-## Version: 1.0.0
---------------------------------------------------
-## License: MIT
-## Copyright: Copyright Batuhan Yildirim, 2020, BPartIS
------
+Class to cluster embeddings produced by BPartIS and obtain instance segmentation maps.
+(much of this code was adapted from https://github.com/davyneven/SpatialEmbeddings credit to Davy Neven).
+
+.. codeauthor:: Batuhan Yildirim <by256@cam.ac.uk>
 """
 
 import torch

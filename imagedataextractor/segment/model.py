@@ -1,3 +1,9 @@
+"""
+Segmentation model class.
+
+.. codeauthor:: Batuhan Yildirim <by256@cam.ac.uk>
+"""
+
 import os
 import torch
 import numpy as np
@@ -6,6 +12,7 @@ from PIL import Image
 from .cluster import Cluster
 from .nnmodules import BranchedERFNet
 from .uncertainty import expected_entropy, predictive_entropy, uncertainty_filtering
+
 
 class ParticleSegmenter:
 
@@ -20,7 +27,7 @@ class ParticleSegmenter:
             for accuracy (recommended) (default is True).
         n_samples: int
             Number of monte carlo samples used for Bayesian inference (default
-            is 40).
+            is 30).
         device: str {'cpu', 'cuda', None}
             Selected device to run inference on. If None, will select 'cuda' if a
             GPU is available, otherwise will default to 'cpu' (default is 'cpu').

@@ -1,3 +1,10 @@
+"""
+Neural network layers that constitute the BPartIS segmentation model.
+(much of this code was adapted from https://github.com/davyneven/SpatialEmbeddings credit to Davy Neven).
+
+.. codeauthor:: Batuhan Yildirim <by256@cam.ac.uk>
+"""
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F

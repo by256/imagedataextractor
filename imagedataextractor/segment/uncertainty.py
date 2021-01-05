@@ -1,3 +1,9 @@
+"""
+Functions for computing conditional mutual information, uncertainty and uncertainty filtering.
+
+.. codeauthor:: Batuhan Yildirim <by256@cam.ac.uk>
+"""
+
 import torch
 
 
