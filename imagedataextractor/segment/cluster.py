@@ -10,7 +10,22 @@ import torch
 
 class Cluster:
 
-    def __init__(self, n_sigma=1, h=512, w=512, device='cuda'):
+    def __init__(self, n_sigma=2, h=512, w=512, device='cuda'):
+        """
+        Particle instance clustering.
+        
+        Parameters
+        ----------
+        n_sigma: int
+            Number of sigma maps output by the segmentation model. (default is 2).
+        h: int
+            Height of image being clustered. (default is 512).
+        w: int
+            Width of image being clustered. (default is 512).
+        device: str {'cpu', 'cuda', None}
+            Selected device to run clustering on. If None, will select 'cuda' if a
+            GPU is available, otherwise will default to 'cpu' (default is 'cpu').
+        """
         self.n_sigma = n_sigma
         self.device = device
         xm = torch.linspace(0, 1, w).view(1, 1, -1).expand(1, h, w)

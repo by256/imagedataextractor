@@ -18,6 +18,7 @@ def predictive_entropy(mc_preds):
     return entropy(torch.mean(mc_preds, dim=0))
 
 def uncertainty_filtering(prediction, uncertainty, tu=0.0125):
+    """Filters instance segmentaton predictions based on their uncertainty."""
 
     filtered_pred = torch.zeros_like(prediction)
 
