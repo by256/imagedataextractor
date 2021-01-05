@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Figure splitting procedures.
+
+.. codeauthor:: Batuhan Yildirim <by256@cam.ac.uk>
+"""
+
 import numpy as np
 from skimage.color import rgb2gray
 from skimage.measure import label, regionprops
