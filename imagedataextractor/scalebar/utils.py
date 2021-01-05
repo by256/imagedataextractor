@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+General sclabar detection utils.
+
+.. codeauthor:: Batuhan Yildirim <by256@cam.ac.uk>
+"""
+
 import cv2
 import numpy as np
 
@@ -7,6 +14,7 @@ def non_max_suppression(boxes, probs=None, overlapThresh=0.3):
     """
     Taken from
     https://github.com/jrosebr1/imutils/blob/master/imutils/object_detection.py#L4
+    Credit to Adrian Rosebrock.
     """
 
     # if there are no boxes, return an empty list

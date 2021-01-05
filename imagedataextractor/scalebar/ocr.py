@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Module for performing optical character recognition.
+
+.. codeauthor:: Batuhan Yildirim <by256@cam.ac.uk>
+"""
+
 import re
 import cv2
 import numpy as np
@@ -5,11 +12,6 @@ import pytesseract
 from PIL import Image, ImageFilter
 
 from .textdetection import TextDetector
-
-"""
-This file will contain all code required to perform OCR.
-
-"""
 
 
 class OCR:

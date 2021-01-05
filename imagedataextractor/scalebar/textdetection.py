@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Module for performing text detection.
+
+.. codeauthor:: Batuhan Yildirim <by256@cam.ac.uk>
+"""
+
 import os
 import cv2
 import numpy as np

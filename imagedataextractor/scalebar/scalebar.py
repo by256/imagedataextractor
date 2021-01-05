@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Module for performing scalebar detection.
+
+.. codeauthor:: Batuhan Yildirim <by256@cam.ac.uk>
+"""
+
 import re
 import cv2
 import numpy as np
