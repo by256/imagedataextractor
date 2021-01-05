@@ -28,6 +28,8 @@ class ParticleSegmenter:
         n_samples: int
             Number of monte carlo samples used for Bayesian inference (default
             is 30).
+        tu: float
+            Uncertainty threshold beyond which to filter particles (default is 0.0125).
         device: str {'cpu', 'cuda', None}
             Selected device to run inference on. If None, will select 'cuda' if a
             GPU is available, otherwise will default to 'cpu' (default is 'cpu').
