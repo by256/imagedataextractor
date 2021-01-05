@@ -33,6 +33,7 @@ class EMData:
                      'diameter_units': [],
                      'original_units': [], 
                      'uncertainty': []}
+        self.fn = None
         self.segmentation = None
         self.uncertainty = None
         self.scalebar = None

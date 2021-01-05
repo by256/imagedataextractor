@@ -49,9 +49,17 @@ def extract(input_path, seg_bayesian=True, seg_n_samples=30, seg_tu=0.0125, seg_
     if os.path.isfile(input_path):
         if imghdr.what(input_path) is not None:
             log.info('Input is an image of type {}.'.format(imghdr.what(input_path)))
+            fn = os.path.splitext(input_path)[0].split('/')[-1]
+            data = []
             image = cv2.imread(input_path)
             images = figsplit(image)
-            data = [_extract_image(im, seg_bayesian, seg_n_samples, seg_tu, seg_device) for im in images]
+            for i, im in enumerate(images):
+                em_data = _extract_image(im, seg_bayesian, seg_n_samples, seg_tu, seg_device)
+                if len(images) == 1:
+                    em_data.fn = fn
+                else:
+                    em_data.fn = fn + '-' + str(i+1)
+                data.append(em_data)
     # single document
     elif os.path.splitext(input_path)[1] in allowed_doc_exts:
         log.info('Input is a document.')
@@ -62,16 +70,24 @@ def extract(input_path, seg_bayesian=True, seg_n_samples=30, seg_tu=0.0125, seg_
         data = []
         for f in os.listdir(input_path):
             file_path = os.path.join(input_path, f)
-            file_ext = os.path.splitext(file_path)[-1]
+            fn, file_ext = os.path.splitext(file_path)
+            fn = fn.split('/')[-1]
             # image
             if imghdr.what(file_path) is not None:
                 image = cv2.imread(file_path)
                 images = figsplit(image)
-                data.append([_extract_image(im, seg_bayesian, seg_n_samples, seg_tu, seg_device) for im in images])
+                for i, im in enumerate(images):
+                    em_data = _extract_image(im, seg_bayesian, seg_n_samples, seg_tu, seg_device)
+                    if len(images) == 1:
+                        em_data.fn = fn
+                    else:
+                        em_data.fn = fn + '-' + str(i+1)
+                    data.append(em_data)
+                # data.append([_extract_image(im, seg_bayesian, seg_n_samples, seg_tu, seg_device) for im in images])
             # document
             elif file_ext in allowed_doc_exts:
                 extract_document()
-        data = [item for sublist in data for item in sublist]  # flatten
+        # data = [item for sublist in data for item in sublist]  # flatten
     else:
         error_msg = 'Input is invalid. Provide a path to an image, a path to a document of type {}, or a path to a directory of images and/or documents.'.format(allowed_doc_exts[:2])
         raise TypeError(error_msg)
