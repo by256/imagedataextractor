@@ -19,8 +19,9 @@ class OCR:
     def __init__(self):
         self.valid_text_expression = r'[1-9]\d*\s*(μ|u|n)m'
 
-    def perform_ocr(self, image: np.ndarray, lang: str='eng', custom_config: str=None) -> str:
-        custom_config = '--psm 6 -c tessedit_char_whitelist=0123456789\sunm'
+    def perform_ocr(self, image, lang='eng', custom_config=None):
+        if not custom_config:
+            custom_config = '--psm 6 -c tessedit_char_whitelist=0123456789\sunm'
         image = self.preprocess_image(image)
         text = pytesseract.image_to_string(image, lang=lang, config=custom_config)
         match = re.search(self.valid_text_expression, text)
@@ -30,7 +31,7 @@ class OCR:
             text = None
         return text
 
-    def get_text_from_rois(self, rois: list):
+    def get_text_from_rois(self, rois):
         valid_match = False
         text = None
         valid_idx = 0
