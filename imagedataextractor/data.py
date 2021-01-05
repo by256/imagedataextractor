@@ -13,6 +13,11 @@ from rdfpy import rdf2d
 
 
 class EMData:
+    """
+    Main ImageDataExtractor data object that contains data once it has been extracted.
+    Also includes functions to compute radial distribution function and particle size 
+    histogram from extracted data.
+    """
 
     def __init__(self):
         self.data = {'idx': [], 

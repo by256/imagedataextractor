@@ -26,7 +26,24 @@ log = logging.getLogger(__name__)
 
 
 def extract(input_path, seg_bayesian=True, seg_n_samples=30, seg_tu=0.0125, seg_device='cpu'):
-    """Extract from single image, single doc, directory of images, or directory of docs."""
+    """
+    Extract from single image, single doc or directory of images/docs.
+    
+    Parameters
+    ----------
+    seg_bayesian: bool
+        Option to use Bayesian inference in segmentation model. Trades off speed
+        for accuracy (recommended) (default is True).
+    seg_n_samples: int
+        Number of monte carlo samples used for Bayesian inference in segmentation model
+        (default is 30).
+    seg_tu: float
+        Uncertainty threshold beyond which to filter particles (default is 0.0125).
+    device: str {'cpu', 'cuda', None}
+        Selected device to run segmentation model inference on. If None, will select 
+        'cuda' if a GPU is available, otherwise will default to 'cpu' (default is 'cpu').
+    """
+
     allowed_doc_exts = ['.html', '.xml', '.pdf']
     # single image
     if os.path.isfile(input_path):
@@ -63,6 +80,22 @@ def extract(input_path, seg_bayesian=True, seg_n_samples=30, seg_tu=0.0125, seg_
 def _extract_image(image, seg_bayesian=True, seg_n_samples=30, seg_tu=0.0125, seg_device='cpu'):
     """
     Extract from a single image (not a panel).
+
+    Parameters
+    ----------
+    image: np.ndarray
+        Image to perform extraction on.
+    seg_bayesian: bool
+        Option to use Bayesian inference in segmentation model. Trades off speed
+        for accuracy (recommended) (default is True).
+    seg_n_samples: int
+        Number of monte carlo samples used for Bayesian inference in segmentation model
+        (default is 30).
+    seg_tu: float
+        Uncertainty threshold beyond which to filter particles (default is 0.0125).
+    device: str {'cpu', 'cuda', None}
+        Selected device to run segmentation model inference on. If None, will select 
+        'cuda' if a GPU is available, otherwise will default to 'cpu' (default is 'cpu').
     """
     if not isinstance(image, np.ndarray):
         image = np.array(image)

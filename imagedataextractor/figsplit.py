@@ -15,6 +15,17 @@ def figsplit(image, min_edge=0.05, min_fill=0.8, t=0.9):
     Extracts constituent images from a panel of images typically 
     found in figures in scientific literature. This was adapted 
     from code written by Matt Swain.
+
+    Parameters
+    ----------
+    image: np.ndarray
+        Image to perform extraction on.
+    min_edge: float
+        Minimum edge (default is 0.05).
+    min_fill: float
+        Minimum fill (default is 0.8).
+    t: float
+        Binarization threshold (default is 0.9).
     """
     images = []
 
