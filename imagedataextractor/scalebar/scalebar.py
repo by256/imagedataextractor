@@ -16,6 +16,7 @@ from .utils import get_contours
 class Scalebar:
 
     def __init__(self, text=None, units=None, conversion=None, contour=None):
+        """Main data object in which scalebar data is stored."""
         self.text = text
         self.units = units
         self.conversion = conversion
@@ -35,6 +36,7 @@ class Scalebar:
 class ScalebarDetector:
 
     def __init__(self):
+        """Scalebar detector."""
         self.text_detector = TextDetector()
         self.ocr = OCR()
         self.conversion_dict = {'nm': 1e-9, 
@@ -62,6 +64,17 @@ class ScalebarDetector:
         return scalebar_contour, scalebar_width
 
     def get_scalebar_line(self, roi, resize_factor=3):
+        """
+        Obtains scalebar line by finding rectangular contours.
+
+        Parameters
+        ----------
+        roi: np.ndarray
+            image region-of-interest from which to obtain scalebar line.
+        resize_factor: int
+            factor by which to scale ROI for more accurate scalebar line localization.
+        """
+
         h, w = roi.shape[:2]
         if len(roi.shape) == 2:
             roi = np.stack([roi]*3, axis=-1)
