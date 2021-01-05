@@ -1,23 +1,19 @@
 import os
 import cv2
-import copy
 import torch
 import imghdr
 import logging
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-from rdfpy import rdf2d
 from chemdataextractor import Document
 
 from .data import EMData
 from .figsplit import figsplit
 from .analysis import ShapeDetector
-from .analysis.filtering import edge_filter
 from .analysis.particlesize import aspect_ratio
 from .scalebar import ScalebarDetector
 from .segment import ParticleSegmenter
-from .utils import get_contours, shuffle_segmap
+from .utils import shuffle_segmap
 
 log = logging.getLogger(__name__)
 
