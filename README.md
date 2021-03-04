@@ -1,6 +1,6 @@
 <img src="./logo.png" height="100">
 
-**imagedataextractor** is a Python library for electron microscopy image quantification.
+**imagedataextractor** is a Python library for nanoparticle electron microscopy image quantification.
 
 Try the online [Demo](https://imagedataextractor.org/demo).
 
