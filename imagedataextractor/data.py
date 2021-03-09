@@ -34,6 +34,7 @@ class EMData:
                      'original_units': [], 
                      'uncertainty': []}
         self.fn = None
+        self.image = None
         self.segmentation = None
         self.uncertainty = None
         self.scalebar = None
@@ -73,7 +74,7 @@ class EMData:
         valid_idx = np.bitwise_not(self.data['edge'])
         return np.array(self.data['center'])[valid_idx]
 
-    def compute_rdf(self, dr=None):
+    def compute_rdf(self, dr=None, **rdf_kwargs):
         if self.__len__() < 40:
             warnings.warn('Less than 40 particles were extracted. Resulting RDF is likely to be incorrect.')
         if not dr:

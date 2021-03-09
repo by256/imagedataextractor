@@ -53,6 +53,8 @@ def extract(input_path, seg_bayesian=True, seg_n_samples=30, seg_tu=0.0125, seg_
             data = []
             image = cv2.imread(input_path)
             images = figsplit(image)
+            if not images:
+                images = [image]
             for i, im in enumerate(images):
                 em_data = _extract_image(im, seg_bayesian, seg_n_samples, seg_tu, seg_device)
                 if len(images) == 1:
@@ -76,6 +78,8 @@ def extract(input_path, seg_bayesian=True, seg_n_samples=30, seg_tu=0.0125, seg_
             if imghdr.what(file_path) is not None:
                 image = cv2.imread(file_path)
                 images = figsplit(image)
+                if not images:
+                    images = [image]
                 for i, im in enumerate(images):
                     em_data = _extract_image(im, seg_bayesian, seg_n_samples, seg_tu, seg_device)
                     if len(images) == 1:
@@ -125,6 +129,7 @@ def _extract_image(image, seg_bayesian=True, seg_n_samples=30, seg_tu=0.0125, se
     em_data = EMData()
     if not seg_bayesian:
         del em_data.data['uncertainty']
+    em_data.image = image
 
     # detect scalebar
     scalebar = sb_detector.detect(image)
