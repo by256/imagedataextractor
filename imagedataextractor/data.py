@@ -70,6 +70,10 @@ class EMData:
         return counts, bin_edges
 
     @property
+    def coords(self):
+        return np.array(self.data['center'])
+
+    @property
     def valid_coords(self):
         valid_idx = np.bitwise_not(self.data['edge'])
         return np.array(self.data['center'])[valid_idx]
