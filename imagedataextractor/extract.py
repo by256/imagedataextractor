@@ -39,7 +39,7 @@ def extract(input_path, seg_bayesian=True, seg_n_samples=30, seg_tu=0.0125, seg_
         (default is 30).
     seg_tu: float
         Uncertainty threshold beyond which to filter particles (default is 0.0125).
-    device: str {'cpu', 'cuda', None}
+    seg_device: str {'cpu', 'cuda', None}
         Selected device to run segmentation model inference on. If None, will select 
         'cuda' if a GPU is available, otherwise will default to 'cpu' (default is 'cpu').
     """
@@ -95,6 +95,8 @@ def extract(input_path, seg_bayesian=True, seg_n_samples=30, seg_tu=0.0125, seg_
     else:
         error_msg = 'Input is invalid. Provide a path to an image, a path to a document of type {}, or a path to a directory of images and/or documents.'.format(allowed_doc_exts[:2])
         raise TypeError(error_msg)
+    if len(data) == 1:
+        data = data[0]
     return data
 
 def _extract_image(image, seg_bayesian=True, seg_n_samples=30, seg_tu=0.0125, seg_device='cpu'):
