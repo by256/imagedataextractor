@@ -12,9 +12,11 @@ def entropy(p, eps=1e-6):
     return -1.0*((p*torch.log(p)) + ((1.0-p)*(torch.log(1.0-p))))
 
 def expected_entropy(mc_preds):
+    """Aleatoric (data) uncertainty"""
     return torch.mean(entropy(mc_preds), dim=0)
 
 def predictive_entropy(mc_preds):
+    """Total uncertainty"""
     return entropy(torch.mean(mc_preds, dim=0))
 
 def uncertainty_filtering(prediction, uncertainty, tu=0.0125):
