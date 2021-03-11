@@ -80,7 +80,7 @@ See the [example notebook](https://github.com/by256/imagedataextractor/blob/mast
 If you use **imagedataextractor** in your work, please cite the following works:
 
 
-B. Yildirim, J. M. Cole, "Bayesian Particle Instance Segmentation for Electron Microscopy Image Quantification", *J. Chem. Inf. Model.* (2021)  https://doi.org/10.1021/acs.jcim.xxxxxxx
+B. Yildirim, J. M. Cole, "Bayesian Particle Instance Segmentation for Electron Microscopy Image Quantification", *J. Chem. Inf. Model.* (2021)  https://doi.org/10.1021/acs.jcim.0c01455
 
 K. T. Mukaddem, E. J. Beard, B. Yildirim, J. M. Cole, "ImageDataExtractor: A Tool to Extract and Quantify Data from Microscopy Images", *J. Chem. Inf. Model.* (2019) https://doi.org/10.1021/acs.jcim.9b00734
 
