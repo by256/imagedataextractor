@@ -52,14 +52,23 @@ python setup.py install
 
 ## Usage
 
-Simply provide as input a path to an image or a document, or a path to a directory of images and/or documents, as well as an output directory which specifies where you would like the results to be written to.
+Simply provide as input a path to an image or a document, or a path to a directory of images and/or documents.
 
 ```python
 import imagedataextractor as ide
 
-input_path = '<path/to/inputs>'
-output_dir = '<dir/to/write/results/to>'
-ide.extract(input_path, output_dir)
+image_path = '<path/to/image>'
+data = ide.extract(image_path)
+
+# view extracted data as a pandas DataFrame
+df = data.to_pandas()
+
+# retrieve extracted scalebar data
+sb_text = data.scalebar.text
+conversion = data.scalebar.conversion  # pixels to sb units
+
+# resulting particle segmentations
+seg = data.segmentation
 ```
 
 If the input image is a figure containing a panel of images, these will be split and extraction will be performed on each sub-image separately.
@@ -71,7 +80,7 @@ A more detailed usage guide can be found in the [Documentation](https://imagedat
 If you use **imagedataextractor** in your work, please cite the following works:
 
 
-B. Yildirim, J. M. Cole, "Bayesian Particle Instance Segmentation for Electron Microscopy Image Quantification", *J. Chem. Inf. Model.* (2020)  https://doi.org/10.1021/acs.jcim.xxxxxxx
+B. Yildirim, J. M. Cole, "Bayesian Particle Instance Segmentation for Electron Microscopy Image Quantification", *J. Chem. Inf. Model.* (2021)  https://doi.org/10.1021/acs.jcim.xxxxxxx
 
 K. T. Mukaddem, E. J. Beard, B. Yildirim, J. M. Cole, "ImageDataExtractor: A Tool to Extract and Quantify Data from Microscopy Images", *J. Chem. Inf. Model.* (2019) https://doi.org/10.1021/acs.jcim.9b00734
 
