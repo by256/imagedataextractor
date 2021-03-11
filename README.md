@@ -65,7 +65,7 @@ df = data.to_pandas()
 
 # retrieve extracted scalebar data
 sb_text = data.scalebar.text
-conversion = data.scalebar.conversion  # pixels to sb units
+conversion = data.scalebar.conversion  # pixels to meters
 
 # resulting particle segmentations
 seg = data.segmentation
@@ -73,7 +73,7 @@ seg = data.segmentation
 
 If the input image is a figure containing a panel of images, these will be split and extraction will be performed on each sub-image separately.
 
-A more detailed usage guide can be found in the [Documentation](https://imagedataextractor.org/docs/usage).
+See the [example notebook](https://github.com/by256/imagedataextractor/blob/master/examples/example-notebook.ipynb). A more detailed usage guide can be found in the [Documentation](https://imagedataextractor.org/docs/usage).
 
 ## Citing
 
