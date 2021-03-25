@@ -12,6 +12,7 @@ import imghdr
 import logging
 import numpy as np
 import pandas as pd
+from PIL import Image
 from chemdataextractor import Document
 
 from .data import EMData
@@ -51,7 +52,7 @@ def extract(input_path, seg_bayesian=True, seg_n_samples=30, seg_tu=0.0125, seg_
             log.info('Input is an image of type {}.'.format(imghdr.what(input_path)))
             fn = os.path.splitext(input_path)[0].split('/')[-1]
             data = []
-            image = cv2.imread(input_path)
+            image = np.array(Image.open(input_path))
             images = figsplit(image)
             if not images:
                 images = [image]
@@ -76,7 +77,7 @@ def extract(input_path, seg_bayesian=True, seg_n_samples=30, seg_tu=0.0125, seg_
             fn = fn.split('/')[-1]
             # image
             if imghdr.what(file_path) is not None:
-                image = cv2.imread(file_path)
+                image = np.array(Image.open(file_path))
                 images = figsplit(image)
                 if not images:
                     images = [image]
