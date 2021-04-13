@@ -7,13 +7,16 @@ Main extraction modules for imagedataextractor.
 
 import os
 import cv2
-import torch
 import imghdr
 import logging
 import numpy as np
 import pandas as pd
 from PIL import Image
 from chemdataextractor import Document
+try:
+    import torch
+except ImportError:
+    raise ImportError('imagedataextractor requires PyTorch to perform extraction. Ensure that torch==1.6.0 is installed.')
 
 from .data import EMData
 from .figsplit import figsplit
