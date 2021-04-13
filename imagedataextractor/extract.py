@@ -207,7 +207,7 @@ def _extract_image(image, seg_bayesian=True, seg_n_samples=30, seg_tu=0.0125, se
 
         # particle instance uncertainty
         if seg_bayesian:
-            inst_uncertainty = np.mean(uncertainty[inst_mask])
+            inst_uncertainty = np.mean(uncertainty[inst_mask.astype(bool)])
             em_data.data['uncertainty'].append(inst_uncertainty)
         
     if len(em_data) > 0:
