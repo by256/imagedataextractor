@@ -96,11 +96,13 @@ class ScalebarDetector:
         return scalebar_contour, scalebar_width
 
     def parse_scalebar_text(self, text):
+        """Parse and split scalebar text into value and units."""
         value = float(re.split(str('[^\d+]'), text)[0])
         unit = re.split(str('\d+\s*'), text)[-1]
         return value, unit
 
     def detect(self, image):
+        """Detect and return scalebar from an input microscopy image."""
         
         # initialise scalebar
         scalebar = Scalebar()
