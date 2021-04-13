@@ -26,8 +26,7 @@ Try the online [Demo](https://imagedataextractor.org/demo).
 sudo apt-get install tesseract-ocr libtesseract-dev
 ```
 
-#### Installation with `pip` (recommended) (** Not yet working **)
-
+#### Installation with `pip` (recommended)
 ```bash
 pip install imagedataextractor
 ```
