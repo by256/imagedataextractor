@@ -6,7 +6,7 @@ with open('./README.md', 'r') as f:
 
 setuptools.setup(
     name='imagedataextractor',
-    version='2.0.2',
+    version='2.0.3',
     description='imagedataextractor is a Python library for electron microscopy image quantification.',
     long_description=long_description,
     long_description_content_type='text/markdown',
