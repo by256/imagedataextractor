@@ -15,7 +15,6 @@ class TestScalebarDetection(unittest.TestCase):
 
         expected_text = '50 nm'
         expected_units = 'nm'
-        expected_conversion = 6.0e-10
 
         scalebar_detector = ScalebarDetector()
         scalebar = scalebar_detector.detect(test_image)
@@ -23,4 +22,3 @@ class TestScalebarDetection(unittest.TestCase):
 
         self.assertEqual(text, expected_text)
         self.assertEqual(units, expected_units)
-        self.assertAlmostEqual(conversion, expected_conversion, places=10)
