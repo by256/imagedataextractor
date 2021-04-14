@@ -1,0 +1,17 @@
+language: python
+jobs:
+  include:
+    - name: "Python 3.9 on Xenial Linux"
+      python: 3.9           # this works for Linux but is ignored on macOS or Windows
+    - name: "Python 3.8 on Xenial Linux"
+      python: 3.8
+    - name: "Python 3.7 on Xenial Linux"
+      python: 3.7
+install:
+  - sudo apt-get install tesseract-ocr libtesseract-dev
+  - pip3 install --upgrade pip  # all three OSes agree about 'pip3'
+  - pip3 install cython
+  - pip3 install scipy
+  - python3 setup.py install || python setup.py install
+script:
+  - python3 -m unittest || python -m unittest
