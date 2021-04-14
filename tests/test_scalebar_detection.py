@@ -18,7 +18,8 @@ class TestScalebarDetection(unittest.TestCase):
         expected_conversion = 6.0e-10
 
         scalebar_detector = ScalebarDetector()
-        text, units, conversion, scalebar_contour = scalebar_detector.detect(test_image)
+        scalebar = scalebar_detector.detect(test_image)
+        text, units, conversion, scalebar_contour = scalebar.data
 
         self.assertEqual(text, expected_text)
         self.assertEqual(units, expected_units)
