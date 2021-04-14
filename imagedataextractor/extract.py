@@ -141,7 +141,7 @@ def _extract_image(image, seg_bayesian=True, seg_n_samples=30, seg_tu=0.0125, se
     scalebar = sb_detector.detect(image)
     em_data.scalebar = scalebar
     text, units, conversion, scalebar_contour = scalebar.data
-    if scalebar_contour is not None:
+    if conversion is not None:
         log.info('Scalebar detection successful.')
     else:
         log.info('Scalebar detection failed. Measurements will be given in units of pixels.')
