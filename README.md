@@ -1,5 +1,10 @@
 <img src="./logo.png" height="100">
 
+[![Build Status](https://travis-ci.com/by256/imagedataextractor.svg?branch=master)](https://travis-ci.com/by256/imagedataextractor)
+[![PyPI version](https://badge.fury.io/py/imagedataextractor.svg)](https://badge.fury.io/py/imagedataextractor)
+[![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](https://github.com/by256/imagedataextractor/blob/master/LICENSE)
+
+
 **imagedataextractor** is a Python library for nanoparticle electron microscopy image quantification.
 
 Try the online [Demo](https://imagedataextractor.org/demo).
